@@ -5,6 +5,8 @@ import helmet from "helmet";
 import cors from "cors";
 //Routes
 import authRoutes from "./routes/auth.routes";
+import activitiesRoutes from "./routes/activities.routes";
+import timeRoutes from "./routes/time.routes";
 
 dotenv.config();
 const app = express();
@@ -17,6 +19,8 @@ app.use(express.urlencoded({ extended: true }));
 
 //Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/activities", activitiesRoutes);
+app.use("/api/time", timeRoutes);
 
 const PORT = process.env.PORT || 3000;
 
