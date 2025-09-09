@@ -18,3 +18,8 @@ export const registerSchema = z.object({
     .nonempty("Password is required"),
   phone: z.string().nonempty("Phone number is required"),
 });
+
+export const updateRoleSchema = z.object({
+  id: z.number().min(1, "ID is required"),
+  role: z.string().min(1, "Role is required"),
+});
