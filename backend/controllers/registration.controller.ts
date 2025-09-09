@@ -3,6 +3,7 @@ import { registerationSchema } from "../validations/registration";
 import { db } from "../config/db";
 import { activities, registrations, timeSlots, users } from "../schema/schema";
 import { eq, count } from "drizzle-orm";
+import { io } from "../server";
 
 export const registerInTimeSlot = async (req: Request, res: Response) => {
   try {
@@ -68,6 +69,14 @@ export const registerInTimeSlot = async (req: Request, res: Response) => {
       })
       .returning();
 
+    io.emit("registeration:created", {
+      id: newReg.id,
+      userId,
+      timeSlotId,
+      slotStart: slot.startTime,
+      slotEnd: slot.endTime,
+    });
+
     return res
       .status(201)
       .json({ message: "Registration successful", registration: newReg });
@@ -92,6 +101,8 @@ export const getAllRegistrations = async (req: Request, res: Response) => {
       .leftJoin(users, eq(registrations.userId, users.id))
       .leftJoin(timeSlots, eq(registrations.timeSlotId, timeSlots.id))
       .leftJoin(activities, eq(timeSlots.activityId, activities.id));
+
+    io.emit("registrations:update", regs);
 
     res.status(200).json({ registrations: regs });
   } catch (error) {
@@ -135,7 +146,7 @@ export const getMyRegistrations = async (req: Request, res: Response) => {
       registrations: regs,
     });
   } catch (error) {
-    res.status(500).json({ message: "Server error" + error });
+    res.status(500).json({ message: "Server error + " + error });
   }
 };
 
@@ -151,6 +162,9 @@ export const deleteRegistrations = async (req: Request, res: Response) => {
     if (deletedCount === 0) {
       return res.status(404).json({ message: "Registration not found" });
     }
+
+    io.emit("registration:deleted", { id: Number(id) });
+
     res.status(200).json({ message: "Registration deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: "Server error" + error });

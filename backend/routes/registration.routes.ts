@@ -18,8 +18,8 @@ router.get(
   isAuthorizedRole("ADMIN", "SUPERADMIN", "SUPERVISOR"),
   getAllRegistrations
 );
-router.get("/:id", authMiddleware, getRegistrationById);
 router.get("/my", authMiddleware, getMyRegistrations);
+router.get("/:id", authMiddleware, getRegistrationById);
 router.delete(
   "/delete/:id",
   authMiddleware,
