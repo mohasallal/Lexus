@@ -21,7 +21,7 @@ export const users = pgTable("users", {
   fname: varchar("fname", { length: 255 }).notNull(),
   lname: varchar("lname", { length: 255 }).notNull(),
   phone: varchar("phone", { length: 20 }).notNull(),
-  password: varchar("password", { length: 255 }),
+  password: varchar("password", { length: 255 }).notNull(),
   role: role().notNull().default("USER"),
   createdAt: timestamp("created_at").defaultNow(),
 });

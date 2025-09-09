@@ -12,7 +12,7 @@ import { createToken } from "../config/token";
 
 type RoleType = (typeof role.enumValues)[number];
 
-export const Login = async (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response) => {
   try {
     const parseResult = loginSchema.safeParse(req.body);
 
@@ -51,7 +51,7 @@ export const Login = async (req: Request, res: Response) => {
   }
 };
 
-export const Register = async (req: Request, res: Response) => {
+export const register = async (req: Request, res: Response) => {
   try {
     const parseResult = registerSchema.safeParse(req.body);
 
@@ -101,7 +101,7 @@ export const Register = async (req: Request, res: Response) => {
   }
 };
 
-export const Me = async (req: Request, res: Response) => {
+export const me = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.id;
 

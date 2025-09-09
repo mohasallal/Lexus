@@ -1,8 +1,8 @@
 import { Router } from "express";
 import {
-  Login,
-  Me,
-  Register,
+  login,
+  me,
+  register,
   updateRole,
 } from "../controllers/auth.controller";
 import { isAuthorizedRole } from "../middlewares/role.middleware";
@@ -10,14 +10,9 @@ import { authMiddleware } from "../middlewares/auth.middleware";
 
 const router = Router();
 
-router.post("/login", Login);
-router.post(
-  "/register",
-  authMiddleware,
-  isAuthorizedRole("ADMIN", "SUPERADMIN"),
-  Register
-);
-router.get("/me", authMiddleware, Me);
+router.post("/login", login);
+router.post("/register", register);
+router.get("/me", authMiddleware, me);
 router.patch(
   "/role",
   authMiddleware,
