@@ -43,6 +43,7 @@ export const login = async (req: Request, res: Response) => {
         email: user.email,
         fname: user.fname,
         lname: user.lname,
+        phone: user.phone,
       },
       message: "Login successful",
     });
@@ -93,6 +94,7 @@ export const register = async (req: Request, res: Response) => {
         email: newUser[0].email,
         fname: newUser[0].fname,
         lname: newUser[0].lname,
+        phone: newUser[0].phone,
       },
       message: "Account created Successful",
     });
@@ -122,7 +124,6 @@ export const me = async (req: Request, res: Response) => {
         fname: user.fname,
         lname: user.lname,
         phone: user.phone,
-        role: user.role,
         createdAt: user.createdAt,
       },
     });
