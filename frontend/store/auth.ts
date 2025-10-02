@@ -1,9 +1,9 @@
 import { create } from "zustand";
 import api from "@/utils/api";
-import { UserType } from "../types/auth";
+import { User } from "../types/auth";
 
 interface AuthState {
-  user: typeof UserType | null;
+  user: User | null;
   token: string | null;
   loading: boolean;
   error: string | null;
@@ -29,10 +29,24 @@ export const useAuthStore = create<AuthState>((set) => ({
   message: null,
   isInitialized: false,
 
-  initialize: () => {
+  initialize: async () => {
     const token = localStorage.getItem("token");
     if (token) {
-      set({ token, isInitialized: true });
+      try {
+        const res = await api.get("/auth/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const user = res.data.user;
+        set({ token, user, isInitialized: true });
+      } catch (error) {
+        localStorage.removeItem("token");
+        set({
+          user: null,
+          token: null,
+          isInitialized: true,
+          error: "" + error,
+        });
+      }
     } else {
       set({ isInitialized: true });
     }

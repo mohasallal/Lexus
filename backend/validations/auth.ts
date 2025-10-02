@@ -21,5 +21,5 @@ export const registerSchema = z.object({
 
 export const updateRoleSchema = z.object({
   id: z.number().min(1, "ID is required"),
-  role: z.string().min(1, "Role is required"),
+  role: z.enum(["USER", "SUPERVISOR"]),
 });

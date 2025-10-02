@@ -43,6 +43,7 @@ export const login = async (req: Request, res: Response) => {
         email: user.email,
         fname: user.fname,
         lname: user.lname,
+        role: user.role,
         phone: user.phone,
       },
       message: "Login successful",
@@ -71,7 +72,9 @@ export const register = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Email already in use" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const SALT = process.env.SALT || 10;
+
+    const hashedPassword = await bcrypt.hash(password, SALT);
 
     const newUser = await db
       .insert(users)
@@ -81,7 +84,6 @@ export const register = async (req: Request, res: Response) => {
         fname,
         lname,
         phone,
-        role: "SUPERVISOR" as RoleType,
       })
       .returning();
 
@@ -123,6 +125,7 @@ export const me = async (req: Request, res: Response) => {
         email: user.email,
         fname: user.fname,
         lname: user.lname,
+        role: user.role,
         phone: user.phone,
         createdAt: user.createdAt,
       },

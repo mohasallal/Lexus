@@ -23,10 +23,12 @@ import {
 } from "@/components/ui/card";
 import { useAuthStore } from "@/store/auth";
 import { loginSchema } from "@/schema/Auth";
+import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
   const { login, loading, error, message, user, initialize, isInitialized } =
     useAuthStore();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -54,7 +56,7 @@ export default function LoginForm() {
   useEffect(() => {
     if (user) {
       toast.success("Login successful!");
-      // router.push('/dashboard');
+      router.push("/admin/dashboard");
     }
   }, [user]);
 
