@@ -22,7 +22,11 @@ export default function AdminLayout({
     if (isInitialized) {
       if (!token || !user) {
         router.push("/auth/login");
-      } else if (user.role !== Role.ADMIN && user.role !== Role.SUPERADMIN) {
+      } else if (
+        user.role !== Role.ADMIN &&
+        user.role !== Role.SUPERADMIN &&
+        user.role !== Role.SUPERVISOR
+      ) {
         router.push("/");
       }
     }

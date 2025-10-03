@@ -61,7 +61,7 @@ export const register = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Invalid input data" });
     }
 
-    const { email, password, fname, lname, phone } = parseResult.data;
+    const { email, fname, lname, phone } = parseResult.data;
 
     const [existingUser] = await db
       .select()
@@ -74,13 +74,10 @@ export const register = async (req: Request, res: Response) => {
 
     const SALT = process.env.SALT || 10;
 
-    const hashedPassword = await bcrypt.hash(password, SALT);
-
     const newUser = await db
       .insert(users)
       .values({
         email,
-        password: hashedPassword,
         fname,
         lname,
         phone,

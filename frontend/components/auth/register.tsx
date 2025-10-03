@@ -35,7 +35,6 @@ export default function RegisterForm() {
       lname: "",
       email: "",
       phone: "",
-      password: "",
     },
   });
 
@@ -56,8 +55,7 @@ export default function RegisterForm() {
 
   useEffect(() => {
     if (user) {
-      toast.success("Registration successful!");
-      // router.push('/dashboard');
+      toast.success("User Created Successfully!");
     }
   }, [user]);
 
@@ -67,7 +65,6 @@ export default function RegisterForm() {
       values.lname,
       values.email,
       values.phone,
-      values.password
     );
   }
 
@@ -152,25 +149,6 @@ export default function RegisterForm() {
                       <Input
                         placeholder="Enter your phone number"
                         type="tel"
-                        {...field}
-                        disabled={loading}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="Enter your password"
                         {...field}
                         disabled={loading}
                       />

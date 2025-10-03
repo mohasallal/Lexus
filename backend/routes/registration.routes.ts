@@ -3,7 +3,7 @@ import { authMiddleware } from "../middlewares/auth.middleware";
 import {
   deleteRegistrations,
   getAllRegistrations,
-  getMyRegistrations,
+  getUserRegistrations,
   getRegistrationById,
   registerInTimeSlot,
 } from "../controllers/registration.controller";
@@ -18,7 +18,7 @@ router.get(
   isAuthorizedRole("ADMIN", "SUPERADMIN", "SUPERVISOR"),
   getAllRegistrations
 );
-router.get("/my", authMiddleware, getMyRegistrations);
+router.get("/my", authMiddleware, getUserRegistrations);
 router.get("/:id", authMiddleware, getRegistrationById);
 router.delete(
   "/delete/:id",

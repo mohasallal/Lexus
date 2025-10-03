@@ -15,8 +15,7 @@ interface AuthState {
     fname: string,
     lname: string,
     email: string,
-    phone: string,
-    password: string
+    phone: string
   ) => Promise<void>;
   logout: () => void;
 }
@@ -64,7 +63,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
-  register: async (fname, lname, email, phone, password) => {
+  register: async (fname, lname, email, phone) => {
     try {
       set({ loading: true, error: null, message: null });
 
@@ -73,7 +72,6 @@ export const useAuthStore = create<AuthState>((set) => ({
         lname,
         email,
         phone,
-        password,
       });
       const { token, user, message } = res.data;
       localStorage.setItem("token", token);

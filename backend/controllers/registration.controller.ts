@@ -7,18 +7,12 @@ import { io } from "../server";
 
 export const registerInTimeSlot = async (req: Request, res: Response) => {
   try {
-    const userId = req.user?.id;
-
-    if (!userId) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-
     const safeParsed = registerationSchema.safeParse(req.body);
 
     if (!safeParsed.success) {
       return res.status(400).json({ message: "Invalid input data" });
     }
-    const { timeSlotId } = safeParsed.data;
+    const { timeSlotId, userId } = safeParsed.data;
 
     const [slot] = await db
       .select()
@@ -128,7 +122,7 @@ export const getRegistrationById = async (req: Request, res: Response) => {
   }
 };
 
-export const getMyRegistrations = async (req: Request, res: Response) => {
+export const getUserRegistrations = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.id;
 

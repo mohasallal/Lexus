@@ -11,7 +11,12 @@ import { authMiddleware } from "../middlewares/auth.middleware";
 const router = Router();
 
 router.post("/login", login);
-router.post("/register", register);
+router.post(
+  "/register",
+  authMiddleware,
+  isAuthorizedRole("ADMIN", "SUPERADMIN", "SUPERVISOR"),
+  register
+);
 router.get("/me", authMiddleware, me);
 router.put(
   "/role",
