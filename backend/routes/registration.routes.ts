@@ -5,21 +5,43 @@ import {
   getAllRegistrations,
   getUserRegistrations,
   getRegistrationById,
+  getRegistrationsByTimeSlot,
   registerInTimeSlot,
 } from "../controllers/registration.controller";
 import { isAuthorizedRole } from "../middlewares/role.middleware";
 
 const router = Router();
 
-router.post("/create", authMiddleware, registerInTimeSlot);
+router.post(
+  "/create",
+  authMiddleware,
+  isAuthorizedRole("ADMIN", "SUPERADMIN", "SUPERVISOR"),
+  registerInTimeSlot
+);
 router.get(
   "/all",
   authMiddleware,
   isAuthorizedRole("ADMIN", "SUPERADMIN", "SUPERVISOR"),
   getAllRegistrations
 );
-router.get("/my", authMiddleware, getUserRegistrations);
-router.get("/:id", authMiddleware, getRegistrationById);
+router.get(
+  "/:id",
+  authMiddleware,
+  isAuthorizedRole("ADMIN", "SUPERADMIN", "SUPERVISOR"),
+  getRegistrationById
+);
+router.get(
+  "/:userId/registrations",
+  authMiddleware,
+  isAuthorizedRole("ADMIN", "SUPERADMIN", "SUPERVISOR"),
+  getUserRegistrations
+);
+router.get(
+  "/timeslot/:timeSlotId",
+  authMiddleware,
+  isAuthorizedRole("ADMIN", "SUPERADMIN", "SUPERVISOR"),
+  getRegistrationsByTimeSlot
+);
 router.delete(
   "/delete/:id",
   authMiddleware,

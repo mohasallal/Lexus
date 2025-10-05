@@ -72,8 +72,6 @@ export const register = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Email already in use" });
     }
 
-    const SALT = process.env.SALT || 10;
-
     const newUser = await db
       .insert(users)
       .values({

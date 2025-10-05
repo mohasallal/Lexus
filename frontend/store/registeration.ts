@@ -9,8 +9,11 @@ interface RegistrationsState {
   message: string | null;
   createRegistration: (userId: number, timeSlotId: number) => Promise<void>;
   getAllRegistrations: () => Promise<void>;
-  getUserRegistrations: (id: number) => Promise<Registration[] | null>;
   getRegistrationById: (id: number) => Promise<Registration | null>;
+  getRegistrationsByUserId: (userId: number) => Promise<Registration[] | null>;
+  getRegistrationByTimeSlot: (
+    timeSlotId: number
+  ) => Promise<Registration[] | null>;
   deleteRegistration: (id: number) => Promise<void>;
 }
 
@@ -23,7 +26,7 @@ const validateResponse = (
   }
 };
 
-export const useRegistrationsStore = create<RegistrationsState>((set) => ({
+export const useRegStore = create<RegistrationsState>((set) => ({
   registrations: null,
   loading: false,
   error: null,
@@ -52,6 +55,7 @@ export const useRegistrationsStore = create<RegistrationsState>((set) => ({
       set({ loading: false });
     }
   },
+
   getAllRegistrations: async () => {
     try {
       set({ loading: true, error: null, message: null });
@@ -68,23 +72,7 @@ export const useRegistrationsStore = create<RegistrationsState>((set) => ({
       set({ loading: false });
     }
   },
-  getUserRegistrations: async (userId) => {
-    try {
-      set({ loading: true, error: null, message: null });
-      const res = await api.get(`/reg/user/${userId}`);
-      validateResponse(res, "registrations");
-      return res.data.registrations;
-    } catch (error) {
-      let errorMessage = "An unexpected error occurred";
-      if (error instanceof Error) {
-        errorMessage = error.message;
-      }
-      set({ error: errorMessage });
-      return null;
-    } finally {
-      set({ loading: false });
-    }
-  },
+
   getRegistrationById: async (id) => {
     try {
       set({ loading: true, error: null, message: null });
@@ -102,6 +90,43 @@ export const useRegistrationsStore = create<RegistrationsState>((set) => ({
       set({ loading: false });
     }
   },
+
+  getRegistrationsByUserId: async (userId) => {
+    try {
+      set({ loading: true, error: null, message: null });
+      const res = await api.get(`/reg/user/${userId}`);
+      validateResponse(res, "registrations");
+      return res.data.registrations;
+    } catch (error) {
+      let errorMessage = "An unexpected error occurred";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      set({ error: errorMessage });
+      return null;
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  getRegistrationByTimeSlot: async (timeSlotId) => {
+    try {
+      set({ loading: true, error: null, message: null });
+      const res = await api.get(`/reg/timeslot/${timeSlotId}`);
+      validateResponse(res, "registrations");
+      return res.data.registrations;
+    } catch (error) {
+      let errorMessage = "An unexpected error occurred";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      set({ error: errorMessage });
+      return null;
+    } finally {
+      set({ loading: false });
+    }
+  },
+
   deleteRegistration: async (id) => {
     try {
       set({ loading: true, error: null, message: null });

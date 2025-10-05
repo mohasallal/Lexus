@@ -7,6 +7,7 @@ export const ActivityType = z.object({
     .string()
     .min(1, "Description is required")
     .nonempty("Description cannot be empty"),
+  createdAt: z.string().optional(),
 });
 
 export type Activity = z.infer<typeof ActivityType>;

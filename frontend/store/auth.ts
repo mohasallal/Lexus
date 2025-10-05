@@ -17,6 +17,7 @@ interface AuthState {
     email: string,
     phone: string
   ) => Promise<void>;
+  updateRole: (id: number, role: "USER" | "SUPERVISOR") => Promise<void>;
   logout: () => void;
 }
 
@@ -80,6 +81,21 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({ error: "Registration failed " + error, loading: false });
     }
   },
+
+  updateRole: async (id, role) => {
+    try {
+      set({ loading: true, error: null, message: null });
+      const res = await api.put("/auth/role", { id, role });
+      const { user, message } = res.data;
+      set({ message, loading: false });
+      set((state) => ({
+        user: state.user?.id === id ? user : state.user,
+      }));
+    } catch (error) {
+      set({ error: "Role update failed " + error, loading: false });
+    }
+  },
+
   logout: () => {
     localStorage.removeItem("token");
     set({ user: null, token: null, message: "Logged out successfully" });

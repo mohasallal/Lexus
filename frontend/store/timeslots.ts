@@ -15,6 +15,7 @@ interface TimeSlotsState {
   ) => Promise<void>;
   getTimeSlots: () => Promise<void>;
   getTimeSlotById: (id: number) => Promise<TimeSlot | null>;
+  getTimeSlotsByActivity: (activityId: number) => Promise<TimeSlot[] | null>;
   updateTimeSlot: (
     id: number,
     activityId: number,
@@ -49,8 +50,8 @@ export const useTimeSlotsStore = create<TimeSlotsState>((set) => ({
         endTime,
         maxParticipants,
       });
-      validateResponse(res, "timeSlot");
-      const newTimeSlot = res.data.timeSlot;
+      validateResponse(res, "slot");
+      const newTimeSlot = res.data.slot;
       set((state) => ({
         timeSlots: state.timeSlots
           ? [...state.timeSlots, newTimeSlot]
@@ -88,14 +89,31 @@ export const useTimeSlotsStore = create<TimeSlotsState>((set) => ({
     try {
       set({ loading: true, error: null, message: null });
       const res = await api.get(`/time/${id}`);
-      validateResponse(res, "timeSlot");
-      return res.data.timeSlot;
+      validateResponse(res, "slot");
+      return res.data.slot;
     } catch (error) {
       let errorMessage = "An unexpected error occurred";
       if (error instanceof Error) {
         errorMessage = error.message;
       }
       set({ error: errorMessage });
+    } finally {
+      set({ loading: false });
+    }
+  },
+  getTimeSlotsByActivity: async (activityId) => {
+    try {
+      set({ loading: true, error: null, message: null });
+      const res = await api.get(`/time/activity/${activityId}`);
+      validateResponse(res, "timeSlots");
+      return res.data.timeSlots;
+    } catch (error) {
+      let errorMessage = "An unexpected error occurred";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      set({ error: errorMessage });
+      return null;
     } finally {
       set({ loading: false });
     }
@@ -115,8 +133,8 @@ export const useTimeSlotsStore = create<TimeSlotsState>((set) => ({
         endTime,
         maxParticipants,
       });
-      validateResponse(res, "timeSlot");
-      const updatedTimeSlot = res.data.timeSlot;
+      validateResponse(res, "slot");
+      const updatedTimeSlot = res.data.slot;
       set((state) => ({
         timeSlots: state.timeSlots
           ? state.timeSlots.map((timeSlot) =>

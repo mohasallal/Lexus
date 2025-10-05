@@ -12,6 +12,7 @@ export const UserType = z.object({
   email: z.email(),
   phone: z.string(),
   role: roleEnum,
+  createdAt: z.string().optional(),
 });
 
 export type User = z.infer<typeof UserType>;

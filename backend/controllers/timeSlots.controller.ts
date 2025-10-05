@@ -45,6 +45,19 @@ export const getTimeSlots = async (req: Request, res: Response) => {
   }
 };
 
+export const getTimeSlotsByActivity = async (req: Request, res: Response) => {
+  try {
+    const { activityId } = req.params;
+    const slots = await db
+      .select()
+      .from(timeSlots)
+      .where(eq(timeSlots.activityId, Number(activityId)));
+    res.status(200).json({ timeSlots: slots });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" + error });
+  }
+};
+
 export const getTimeSlotById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;

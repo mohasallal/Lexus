@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { registerationSchema } from "../validations/registration";
 import { db } from "../config/db";
 import { activities, registrations, timeSlots, users } from "../schema/schema";
-import { eq, count } from "drizzle-orm";
+import { eq, count, and } from "drizzle-orm";
 import { io } from "../server";
 
 export const registerInTimeSlot = async (req: Request, res: Response) => {
@@ -124,16 +124,54 @@ export const getRegistrationById = async (req: Request, res: Response) => {
 
 export const getUserRegistrations = async (req: Request, res: Response) => {
   try {
-    const userId = req.user?.id;
+    const { userId } = req.params;
 
-    if (!userId) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
+    const userRegs = await db
+      .select({
+        activityId: activities.id,
+        activityName: activities.name,
+        activityDescription: activities.description,
+        timeSlotId: timeSlots.id,
+        slotStart: timeSlots.startTime,
+        slotEnd: timeSlots.endTime,
+      })
+      .from(registrations)
+      .leftJoin(timeSlots, eq(registrations.timeSlotId, timeSlots.id))
+      .leftJoin(activities, eq(timeSlots.activityId, activities.id))
+      .where(eq(registrations.userId, Number(userId)));
+
+    res.status(200).json({
+      message: "User registrations fetched successfully",
+      registrations: userRegs,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server error: " + error });
+  }
+};
+
+export const getRegistrationsByTimeSlot = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { activityId, timeSlotId } = req.params;
 
     const regs = await db
-      .select()
+      .select({
+        regId: registrations.id,
+        userName: users.fname,
+        userEmail: users.email,
+        userPhone: users.phone,
+      })
       .from(registrations)
-      .where(eq(registrations.userId, userId));
+      .leftJoin(users, eq(registrations.userId, users.id))
+      .leftJoin(timeSlots, eq(registrations.timeSlotId, timeSlots.id))
+      .where(
+        and(
+          eq(registrations.timeSlotId, Number(timeSlotId)),
+          eq(timeSlots.activityId, Number(activityId))
+        )
+      );
 
     res.status(200).json({
       message: "Registrations fetched successfully",
