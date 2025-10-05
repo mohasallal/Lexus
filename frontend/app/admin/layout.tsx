@@ -34,19 +34,19 @@ export default function AdminLayout({
 
   if (!isInitialized) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black to-gray-900">
         <div className="text-center">
-          <div className="animate-bounce text-6xl mb-4">⛳</div>
+          <div className="animate-bounce text-6xl mb-4">🏎️</div>
           <div className="flex items-center justify-center space-x-2 mb-2">
-            <span className="text-green-600 font-bold">Loading Dashboard</span>
+            <span className="font-bold">Loading Dashboard</span>
             <div className="flex items-center space-x-1">
-              <div className="w-2 h-2 bg-green-600 rounded-full animate-pulse"></div>
+              <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
               <div
-                className="w-2 h-2 bg-green-600 rounded-full animate-pulse"
+                className="w-2 h-2 bg-white rounded-full animate-pulse"
                 style={{ animationDelay: "0.2s" }}
               ></div>
               <div
-                className="w-2 h-2 bg-green-600 rounded-full animate-pulse"
+                className="w-2 h-2 bg-white rounded-full animate-pulse"
                 style={{ animationDelay: "0.4s" }}
               ></div>
             </div>
