@@ -9,6 +9,7 @@ import {
   updateRoleSchema,
 } from "../validations/auth";
 import { createToken } from "../config/token";
+import { io } from "../server";
 
 type RoleType = (typeof role.enumValues)[number];
 
@@ -82,6 +83,15 @@ export const register = async (req: Request, res: Response) => {
       })
       .returning();
 
+    io.emit("userCreated", {
+      id: newUser[0].id,
+      email: newUser[0].email,
+      fname: newUser[0].fname,
+      lname: newUser[0].lname,
+      phone: newUser[0].phone,
+      createdAt: newUser[0].createdAt,
+    });
+
     const token = createToken(newUser[0].id.toString());
 
     res.status(201).json({
@@ -125,6 +135,27 @@ export const me = async (req: Request, res: Response) => {
         createdAt: user.createdAt,
       },
     });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" + error });
+  }
+};
+
+export const getAllUsers = async (req: Request, res: Response) => {
+  try {
+    const allUsers = await db
+      .select({
+        id: users.id,
+        email: users.email,
+        fname: users.fname,
+        lname: users.lname,
+        phone: users.phone,
+        role: users.role,
+        createdAt: users.createdAt,
+      })
+      .from(users)
+      .where(eq(users.role, "USER"));
+
+    res.status(200).json({ users: allUsers });
   } catch (error) {
     res.status(500).json({ message: "Internal server error" + error });
   }

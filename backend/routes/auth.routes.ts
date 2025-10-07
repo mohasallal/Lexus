@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  getAllUsers,
   login,
   me,
   register,
@@ -16,6 +17,12 @@ router.post(
   authMiddleware,
   isAuthorizedRole("ADMIN", "SUPERADMIN", "SUPERVISOR"),
   register
+);
+router.get(
+  "/users",
+  authMiddleware,
+  isAuthorizedRole("ADMIN", "SUPERADMIN", "SUPERVISOR"),
+  getAllUsers
 );
 router.get("/me", authMiddleware, me);
 router.put(

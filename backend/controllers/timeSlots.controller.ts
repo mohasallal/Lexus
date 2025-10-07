@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { db } from "../config/db";
-import { activities, timeSlots } from "../schema/schema";
-import { eq } from "drizzle-orm";
+import { activities, timeSlots, registrations } from "../schema/schema";
+import { eq, count, sql } from "drizzle-orm";
 import { timeSlotSchema } from "../validations/time";
 
 export const createTimeSlot = async (req: Request, res: Response) => {
@@ -27,7 +27,16 @@ export const createTimeSlot = async (req: Request, res: Response) => {
       })
       .returning();
 
-    res.status(201).json({ message: "Time slot created", slot });
+    // Add the additional fields for consistency with other endpoints
+    const slotWithAvailability = {
+      ...slot,
+      registeredCount: 0,
+      availableSeats: maxParticipants,
+    };
+
+    res
+      .status(201)
+      .json({ message: "Time slot created", slot: slotWithAvailability });
   } catch (err: any) {
     res.status(400).json({ message: err.message });
   }
@@ -35,8 +44,22 @@ export const createTimeSlot = async (req: Request, res: Response) => {
 
 export const getTimeSlots = async (req: Request, res: Response) => {
   try {
-    const all = await db.select().from(timeSlots);
-    res.status(201).json({
+    const all = await db
+      .select({
+        id: timeSlots.id,
+        activityId: timeSlots.activityId,
+        startTime: timeSlots.startTime,
+        endTime: timeSlots.endTime,
+        maxParticipants: timeSlots.maxParticipants,
+        createdAt: timeSlots.createdAt,
+        registeredCount: sql<number>`COALESCE(COUNT(${registrations.id}), 0)`,
+        availableSeats: sql<number>`COALESCE(${timeSlots.maxParticipants} - COUNT(${registrations.id}), ${timeSlots.maxParticipants})`,
+      })
+      .from(timeSlots)
+      .leftJoin(registrations, eq(timeSlots.id, registrations.timeSlotId))
+      .groupBy(timeSlots.id);
+
+    res.status(200).json({
       timeSlots: all,
       message: "Time slots fetched successfully",
     });
@@ -49,9 +72,21 @@ export const getTimeSlotsByActivity = async (req: Request, res: Response) => {
   try {
     const { activityId } = req.params;
     const slots = await db
-      .select()
+      .select({
+        id: timeSlots.id,
+        activityId: timeSlots.activityId,
+        startTime: timeSlots.startTime,
+        endTime: timeSlots.endTime,
+        maxParticipants: timeSlots.maxParticipants,
+        createdAt: timeSlots.createdAt,
+        registeredCount: sql<number>`COALESCE(COUNT(${registrations.id}), 0)`,
+        availableSeats: sql<number>`COALESCE(${timeSlots.maxParticipants} - COUNT(${registrations.id}), ${timeSlots.maxParticipants})`,
+      })
       .from(timeSlots)
-      .where(eq(timeSlots.activityId, Number(activityId)));
+      .leftJoin(registrations, eq(timeSlots.id, registrations.timeSlotId))
+      .where(eq(timeSlots.activityId, Number(activityId)))
+      .groupBy(timeSlots.id);
+
     res.status(200).json({ timeSlots: slots });
   } catch (error) {
     res.status(500).json({ message: "Internal server error" + error });
@@ -63,9 +98,20 @@ export const getTimeSlotById = async (req: Request, res: Response) => {
     const { id } = req.params;
 
     const [slot] = await db
-      .select()
+      .select({
+        id: timeSlots.id,
+        activityId: timeSlots.activityId,
+        startTime: timeSlots.startTime,
+        endTime: timeSlots.endTime,
+        maxParticipants: timeSlots.maxParticipants,
+        createdAt: timeSlots.createdAt,
+        registeredCount: sql<number>`COALESCE(COUNT(${registrations.id}), 0)`,
+        availableSeats: sql<number>`COALESCE(${timeSlots.maxParticipants} - COUNT(${registrations.id}), ${timeSlots.maxParticipants})`,
+      })
       .from(timeSlots)
-      .where(eq(timeSlots.id, Number(id)));
+      .leftJoin(registrations, eq(timeSlots.id, registrations.timeSlotId))
+      .where(eq(timeSlots.id, Number(id)))
+      .groupBy(timeSlots.id);
 
     if (!slot) return res.status(404).json({ message: "Time slot not found" });
 
@@ -94,7 +140,27 @@ export const updateTimeSlot = async (req: Request, res: Response) => {
 
     if (!slot) return res.status(404).json({ message: "Time slot not found" });
 
-    res.json({ message: "Time slot updated", slot });
+    // Get the updated time slot with availability information
+    const [updatedSlotWithAvailability] = await db
+      .select({
+        id: timeSlots.id,
+        activityId: timeSlots.activityId,
+        startTime: timeSlots.startTime,
+        endTime: timeSlots.endTime,
+        maxParticipants: timeSlots.maxParticipants,
+        createdAt: timeSlots.createdAt,
+        registeredCount: sql<number>`COALESCE(COUNT(${registrations.id}), 0)`,
+        availableSeats: sql<number>`COALESCE(${timeSlots.maxParticipants} - COUNT(${registrations.id}), ${timeSlots.maxParticipants})`,
+      })
+      .from(timeSlots)
+      .leftJoin(registrations, eq(timeSlots.id, registrations.timeSlotId))
+      .where(eq(timeSlots.id, id))
+      .groupBy(timeSlots.id);
+
+    res.json({
+      message: "Time slot updated",
+      slot: updatedSlotWithAvailability,
+    });
   } catch (err: any) {
     res.status(400).json({ message: err.message });
   }

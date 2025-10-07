@@ -1,6 +1,7 @@
 import api from "@/utils/api";
 import { create } from "zustand";
 import { TimeSlot } from "@/types/timeslots";
+import { socket } from "@/lib/socket";
 
 interface TimeSlotsState {
   timeSlots: TimeSlot[] | null;
@@ -24,6 +25,7 @@ interface TimeSlotsState {
     maxParticipants: number
   ) => Promise<void>;
   deleteTimeSlot: (id: number) => Promise<void>;
+  initializeSocketListeners: () => void;
 }
 
 const validateResponse = (
@@ -175,5 +177,33 @@ export const useTimeSlotsStore = create<TimeSlotsState>((set) => ({
     } finally {
       set({ loading: false });
     }
+  },
+
+  initializeSocketListeners: () => {
+    socket.on("timeSlotCreated", (newTimeSlot: TimeSlot) => {
+      set((state) => ({
+        timeSlots: state.timeSlots
+          ? [...state.timeSlots, newTimeSlot]
+          : [newTimeSlot],
+      }));
+    });
+
+    socket.on("timeSlotUpdated", (updatedTimeSlot: TimeSlot) => {
+      set((state) => ({
+        timeSlots: state.timeSlots
+          ? state.timeSlots.map((timeSlot) =>
+              timeSlot.id === updatedTimeSlot.id ? updatedTimeSlot : timeSlot
+            )
+          : [updatedTimeSlot],
+      }));
+    });
+
+    socket.on("timeSlotDeleted", ({ id }: { id: number }) => {
+      set((state) => ({
+        timeSlots: state.timeSlots
+          ? state.timeSlots.filter((timeSlot) => timeSlot.id !== id)
+          : null,
+      }));
+    });
   },
 }));

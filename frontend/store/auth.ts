@@ -1,9 +1,11 @@
 import { create } from "zustand";
 import api from "@/utils/api";
 import { User } from "../types/auth";
+import { socket } from "@/lib/socket";
 
 interface AuthState {
   user: User | null;
+  users: User[] | null;
   token: string | null;
   loading: boolean;
   error: string | null;
@@ -17,12 +19,15 @@ interface AuthState {
     email: string,
     phone: string
   ) => Promise<void>;
+  getAllUsers: () => Promise<void>;
   updateRole: (id: number, role: "USER" | "SUPERVISOR") => Promise<void>;
   logout: () => void;
+  initializeSocketListeners: () => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
+  users: null,
   token: null,
   loading: false,
   error: null,
@@ -82,6 +87,17 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
+  getAllUsers: async () => {
+    try {
+      set({ loading: true, error: null });
+      const res = await api.get("/auth/users");
+      const { users } = res.data;
+      set({ users, loading: false });
+    } catch (error) {
+      set({ error: "Failed to fetch users " + error, loading: false });
+    }
+  },
+
   updateRole: async (id, role) => {
     try {
       set({ loading: true, error: null, message: null });
@@ -99,5 +115,13 @@ export const useAuthStore = create<AuthState>((set) => ({
   logout: () => {
     localStorage.removeItem("token");
     set({ user: null, token: null, message: "Logged out successfully" });
+  },
+
+  initializeSocketListeners: () => {
+    socket.on("userCreated", (newUser: User) => {
+      set((state) => ({
+        users: state.users ? [...state.users, newUser] : [newUser],
+      }));
+    });
   },
 }));

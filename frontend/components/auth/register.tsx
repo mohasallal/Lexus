@@ -23,9 +23,11 @@ import {
 } from "@/components/ui/card";
 import { useAuthStore } from "@/store/auth";
 import { registerSchema } from "@/schema/Auth";
+import GlassyCard from "../GlassyCard";
+import UserSvg from "../svgs/user";
 
 export default function RegisterForm() {
-  const { register, loading, error, message, user, initialize, isInitialized } =
+  const { register, loading, error, message, initialize, isInitialized } =
     useAuthStore();
 
   const form = useForm<z.infer<typeof registerSchema>>({
@@ -53,118 +55,111 @@ export default function RegisterForm() {
     }
   }, [message, error]);
 
-  useEffect(() => {
-    if (user) {
-      toast.success("User Created Successfully!");
-    }
-  }, [user]);
-
   async function onSubmit(values: z.infer<typeof registerSchema>) {
-    await register(
-      values.fname,
-      values.lname,
-      values.email,
-      values.phone,
-    );
+    await register(values.fname, values.lname, values.email, values.phone);
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl text-center">
-            Create an account
-          </CardTitle>
-          <CardDescription className="text-center">
-            Enter your information to create your account
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="fname"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>First Name</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter your first name"
-                          {...field}
-                          disabled={loading}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+    <Card className="w-full max-w-sm rounded-sm py-4">
+      <CardHeader className="px-4">
+        <GlassyCard
+          className="bg-transparent shadow-none w-full max-w-full py-0 px-0"
+          icon={<UserSvg fill="white" />}
+          title="GUEST REGISTRATION"
+          subtitle="Add new guests and register them in activities"
+          subColor="text-gray-700"
+          titleColor="text-black"
+          iconBgColor="bg-black"
+        />
+        <hr />
+      </CardHeader>
+      <CardContent className="px-4">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="fname"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>First Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter your first name"
+                      {...field}
+                      disabled={loading}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-                <FormField
-                  control={form.control}
-                  name="lname"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Last Name</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter your last name"
-                          {...field}
-                          disabled={loading}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+            <FormField
+              control={form.control}
+              name="lname"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Last Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter your last name"
+                      {...field}
+                      disabled={loading}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Enter your email"
-                        type="email"
-                        {...field}
-                        disabled={loading}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter your email"
+                      type="email"
+                      {...field}
+                      disabled={loading}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Phone</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Enter your phone number"
-                        type="tel"
-                        {...field}
-                        disabled={loading}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Phone</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter your phone number"
+                      type="tel"
+                      {...field}
+                      disabled={loading}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Creating account..." : "Create account"}
-              </Button>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
-    </div>
+            <Button
+              type="submit"
+              className="w-full rounded-none bg-black cursor-pointer hover:bg-gray-900"
+              disabled={loading}
+            >
+              {loading ? "Registering guest..." : "Register guest"}
+            </Button>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
   );
 }

@@ -63,7 +63,7 @@ export const registerInTimeSlot = async (req: Request, res: Response) => {
       })
       .returning();
 
-    io.emit("registeration:created", {
+    io.emit("registration:created", {
       id: newReg.id,
       userId,
       timeSlotId,
@@ -96,7 +96,7 @@ export const getAllRegistrations = async (req: Request, res: Response) => {
       .leftJoin(timeSlots, eq(registrations.timeSlotId, timeSlots.id))
       .leftJoin(activities, eq(timeSlots.activityId, activities.id));
 
-    io.emit("registrations:update", regs);
+    io.emit("registration:update", regs);
 
     res.status(200).json({ registrations: regs });
   } catch (error) {

@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import MenuSvg from "../svgs/menu";
 import XSvg from "../svgs/x";
 import LangSvg from "../svgs/lang";
+import GlassyCard from "../GlassyCard";
 
 const NavBar = () => {
   const { user, isInitialized, initialize, logout } = useAuthStore();
@@ -57,18 +58,17 @@ const NavBar = () => {
                     <LogOutSvg width={20} height={20} fill="white" />
                     تسجيل الخروج
                   </Button>
-                  <Button
-                    variant={"ghost"}
-                    className="text-white hover:text-white cursor-pointer hover:bg-gray-600 flex items-center gap-2"
+                  <Link
+                    href="/admin/dashboard"
+                    className="flex items-center gap-2"
                   >
-                    <Link
-                      href="/admin/dashboard"
-                      className="flex items-center gap-2"
-                    >
-                      <UserSvg width={20} height={20} fill="white" />
-                      لوحة التحكم
-                    </Link>
-                  </Button>
+                    <GlassyCard
+                      icon={<UserSvg />}
+                      title="اهلا و سهلا مجددا"
+                      subtitle={`${user.role}`}
+                      className="max-h-fit"
+                    />
+                  </Link>
                 </>
               ) : (
                 <Button

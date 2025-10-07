@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import api from "@/utils/api";
 import { Activity } from "@/types/activities";
+import { socket } from "@/lib/socket";
 
 interface ActivitiesState {
   activities: Activity[] | null;
@@ -16,6 +17,7 @@ interface ActivitiesState {
     description: string
   ) => Promise<void>;
   deleteActivity: (id: number) => Promise<void>;
+  initializeSocketListeners: () => void;
 }
 
 const validateResponse = (
@@ -138,5 +140,33 @@ export const useActivitiesStore = create<ActivitiesState>((set) => ({
     } finally {
       set({ loading: false });
     }
+  },
+
+  initializeSocketListeners: () => {
+    socket.on("activityCreated", (newActivity: Activity) => {
+      set((state) => ({
+        activities: state.activities
+          ? [...state.activities, newActivity]
+          : [newActivity],
+      }));
+    });
+
+    socket.on("activityUpdated", (updatedActivity: Activity) => {
+      set((state) => ({
+        activities: state.activities
+          ? state.activities.map((activity) =>
+              activity.id === updatedActivity.id ? updatedActivity : activity
+            )
+          : [updatedActivity],
+      }));
+    });
+
+    socket.on("activityDeleted", ({ id }: { id: number }) => {
+      set((state) => ({
+        activities: state.activities
+          ? state.activities.filter((activity) => activity.id !== id)
+          : null,
+      }));
+    });
   },
 }));

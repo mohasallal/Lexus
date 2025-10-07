@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import Box from "./Box";
 
 type TimeLeft = {
   days: number;
@@ -34,43 +35,21 @@ const CountdownCard: React.FC = () => {
     return () => clearInterval(id);
   }, []);
 
-  const boxClass =
-    "flex flex-col items-center justify-center gap-1 bg-white/10 border border-white/20 rounded-lg px-4 py-3 min-w-[64px]";
-
   const num = (n: number) => String(n).padStart(2, "0");
 
   return (
-    <Card className="bg-white/6 backdrop-blur-md border-white/20 border p-0 shadow-lg max-w-md mx-auto text-white gap-1">
+    <Card className="bg-white/6 backdrop-blur-md border-white/20 border p-0 shadow-lg w-full mx-auto text-white gap-1">
       <CardHeader className="px-4 pt-4">
-        <CardTitle className="text-sm font-medium">
-          يبدأ الحدث في : 17 اوكتوبر 2025
+        <CardTitle className="text-lg font-medium text-center">
+          الوقت المتبقي للمؤتمر
         </CardTitle>
       </CardHeader>
       <CardContent className="px-4 pb-4">
-        <div className="mt-3 grid grid-cols-4 gap-3">
-          <div className={boxClass}>
-            <div className="text-2xl font-semibold">{num(timeLeft.days)}</div>
-            <div className="text-xs text-white">Days</div>
-          </div>
-
-          <div className={boxClass}>
-            <div className="text-2xl font-semibold">{num(timeLeft.hours)}</div>
-            <div className="text-xs text-white">Hours</div>
-          </div>
-
-          <div className={boxClass}>
-            <div className="text-2xl font-semibold">
-              {num(timeLeft.minutes)}
-            </div>
-            <div className="text-xs text-white">Minutes</div>
-          </div>
-
-          <div className={boxClass}>
-            <div className="text-2xl font-semibold">
-              {num(timeLeft.seconds)}
-            </div>
-            <div className="text-xs text-white">Seconds</div>
-          </div>
+        <div className="mt-3 grid grid-cols-2 gap-4">
+          <Box value={num(timeLeft.hours)} label="ساعات" />
+          <Box value={num(timeLeft.days)} label="أيام" />
+          <Box value={num(timeLeft.seconds)} label="ثواني" />
+          <Box value={num(timeLeft.minutes)} label="دقائق" />
         </div>
       </CardContent>
     </Card>

@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import api from "@/utils/api";
 import { Registration } from "@/types/registration";
+import { socket } from "@/lib/socket";
 
 interface RegistrationsState {
   registrations: Registration[] | null;
@@ -15,6 +16,7 @@ interface RegistrationsState {
     timeSlotId: number
   ) => Promise<Registration[] | null>;
   deleteRegistration: (id: number) => Promise<void>;
+  initializeSocketListeners: () => void;
 }
 
 const validateResponse = (
@@ -148,5 +150,27 @@ export const useRegStore = create<RegistrationsState>((set) => ({
     } finally {
       set({ loading: false });
     }
+  },
+
+  initializeSocketListeners: () => {
+    socket.on("registration:created", (newReg: Registration) => {
+      set((state) => ({
+        registrations: state.registrations
+          ? [...state.registrations, newReg]
+          : [newReg],
+      }));
+    });
+
+    socket.on("registration:deleted", ({ id }: { id: number }) => {
+      set((state) => ({
+        registrations: state.registrations
+          ? state.registrations.filter((r) => r.id !== id)
+          : null,
+      }));
+    });
+
+    socket.on("registration:update", (updatedRegs: Registration[]) => {
+      set({ registrations: updatedRegs });
+    });
   },
 }));

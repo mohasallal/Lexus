@@ -7,6 +7,8 @@ export const TimeSlotsSchema = z.object({
   endTime: z.string().nonempty("End time is required"),
   maxParticipants: z.number(),
   createdAt: z.string().optional(),
+  registeredCount: z.number().optional(),
+  availableSeats: z.number().optional(),
 });
 
 export type TimeSlot = z.infer<typeof TimeSlotsSchema>;
