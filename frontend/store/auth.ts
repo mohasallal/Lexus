@@ -79,9 +79,8 @@ export const useAuthStore = create<AuthState>((set) => ({
         email,
         phone,
       });
-      const { token, user, message } = res.data;
-      localStorage.setItem("token", token);
-      set({ user, token, message, loading: false });
+      const { message } = res.data;
+      set({ message, loading: false });
     } catch (error) {
       set({ error: "Registration failed " + error, loading: false });
     }

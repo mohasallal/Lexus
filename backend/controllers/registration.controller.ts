@@ -128,16 +128,12 @@ export const getUserRegistrations = async (req: Request, res: Response) => {
 
     const userRegs = await db
       .select({
-        activityId: activities.id,
-        activityName: activities.name,
-        activityDescription: activities.description,
-        timeSlotId: timeSlots.id,
-        slotStart: timeSlots.startTime,
-        slotEnd: timeSlots.endTime,
+        id: registrations.id,
+        userId: registrations.userId,
+        timeSlotId: registrations.timeSlotId,
+        createdAt: registrations.createdAt,
       })
       .from(registrations)
-      .leftJoin(timeSlots, eq(registrations.timeSlotId, timeSlots.id))
-      .leftJoin(activities, eq(timeSlots.activityId, activities.id))
       .where(eq(registrations.userId, Number(userId)));
 
     res.status(200).json({

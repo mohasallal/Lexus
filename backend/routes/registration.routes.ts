@@ -31,7 +31,7 @@ router.get(
   getRegistrationById
 );
 router.get(
-  "/:userId/registrations",
+  "/user/:userId",
   authMiddleware,
   isAuthorizedRole("ADMIN", "SUPERADMIN", "SUPERVISOR"),
   getUserRegistrations

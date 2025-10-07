@@ -3,6 +3,7 @@ import { useAuthStore } from "@/store/auth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Role } from "@/types/auth";
+import NavBar from "@/components/layout/nav";
 
 export default function AdminLayout({
   children,
@@ -56,5 +57,10 @@ export default function AdminLayout({
     );
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      <NavBar />
+      {children}
+    </>
+  );
 }
