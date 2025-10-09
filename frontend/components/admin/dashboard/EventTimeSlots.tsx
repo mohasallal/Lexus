@@ -13,13 +13,7 @@ import { useActivitiesStore } from "@/store/activities";
 import { useTimeSlotsStore } from "@/store/timeslots";
 import { useRegStore } from "@/store/registeration";
 
-// Type for registered user data from backend
-interface RegisteredUser {
-  regId: number;
-  userName: string;
-  userEmail: string;
-  userPhone?: string;
-}
+
 import { Activity } from "@/types/activities";
 import { TimeSlot } from "@/types/timeslots";
 import EventSelectionDialog from "@/components/admin/dialogs/EventSelectionDialog";
@@ -29,7 +23,7 @@ import UserSvg from "@/components/svgs/user";
 const EventTimeSlots = () => {
   const { activities, getActivities } = useActivitiesStore();
   const { timeSlots, getTimeSlots } = useTimeSlotsStore();
-  const { getRegistrationsByActivityTimeSlot, loading } = useRegStore();
+  const { loading, registrations, initializeSocketListeners, getAllRegistrations } = useRegStore();
 
   const [isEventDialogOpen, setIsEventDialogOpen] = useState(false);
   const [isTimeSlotDialogOpen, setIsTimeSlotDialogOpen] = useState(false);
@@ -42,13 +36,31 @@ const EventTimeSlots = () => {
     null
   );
 
-  const [registeredUsers, setRegisteredUsers] = useState<RegisteredUser[]>([]);
   const [viewTimeSlots, setViewTimeSlots] = useState<TimeSlot[]>([]);
+
+  // Compute filtered registrations from store based on selected activity and time slot
+  const filteredRegistrations = selectedActivity && selectedTimeSlot && registrations
+    ? registrations.filter(reg => 
+        reg.activity?.id === selectedActivity.id && 
+        reg.timeSlotId === selectedTimeSlot.id
+      ).map(reg => ({
+        regId: reg.id,
+        userName: `${reg.user?.fname || ''} ${reg.user?.lname || ''}`.trim() || 'Unknown',
+        userEmail: reg.user?.email || '',
+        userPhone: reg.user?.phone
+      }))
+    : [];
 
   useEffect(() => {
     getActivities();
     getTimeSlots();
-  }, [getActivities, getTimeSlots]);
+    getAllRegistrations(); // Load all registrations for filtering
+  }, [getActivities, getTimeSlots, getAllRegistrations]);
+
+  // Initialize socket listeners for real-time updates
+  useEffect(() => {
+    initializeSocketListeners();
+  }, [initializeSocketListeners]);
 
   const handleEventSelect = (activity: Activity) => {
     setSelectedActivity(activity);
@@ -56,24 +68,17 @@ const EventTimeSlots = () => {
       timeSlots?.filter((slot) => slot.activityId === activity.id) || [];
     setViewTimeSlots(activityTimeSlots);
     setSelectedTimeSlot(null);
-    setRegisteredUsers([]);
   };
 
   const handleTimeSlotSelect = async (timeSlot: TimeSlot) => {
     setSelectedTimeSlot(timeSlot);
-    if (selectedActivity) {
-      const users = await getRegistrationsByActivityTimeSlot(
-        selectedActivity.id,
-        timeSlot.id
-      );
-      setRegisteredUsers(users || []);
-    }
+    // No need to set local state - filteredRegistrations will compute automatically
+    // and real-time updates will come through socket events
   };
 
   const resetSelection = () => {
     setSelectedActivity(null);
     setSelectedTimeSlot(null);
-    setRegisteredUsers([]);
     setViewTimeSlots([]);
     setIsEventDialogOpen(false);
     setIsTimeSlotDialogOpen(false);
@@ -117,11 +122,15 @@ const EventTimeSlots = () => {
                   </span>
                 </>
               )}
-              {registeredUsers.length > 0 && (
+              {selectedTimeSlot && (
                 <>
                   <span>→</span>
-                  <span className="bg-green-100 px-2 py-1 rounded border text-green-800 font-medium">
-                    {registeredUsers.length} users found
+                  <span className={`px-2 py-1 rounded border font-medium ${
+                    filteredRegistrations.length > 0 
+                      ? 'bg-green-100 text-green-800 border-green-200' 
+                      : 'bg-gray-100 text-gray-600 border-gray-200'
+                  }`}>
+                    {filteredRegistrations.length} user{filteredRegistrations.length !== 1 ? 's' : ''} registered
                   </span>
                 </>
               )}
@@ -180,7 +189,7 @@ const EventTimeSlots = () => {
               <div className="flex items-center justify-between">
                 <div className="flex-1">
                   <DialogTitle className="text-black">
-                    Registered Users ({registeredUsers.length})
+                    Registered Users ({filteredRegistrations.length})
                   </DialogTitle>
                   <div className="text-sm text-gray-600 mt-1">
                     <p>
@@ -215,9 +224,9 @@ const EventTimeSlots = () => {
                     Loading registered users...
                   </p>
                 </div>
-              ) : registeredUsers.length > 0 ? (
+              ) : filteredRegistrations.length > 0 ? (
                 <div className="space-y-3">
-                  {registeredUsers.map((user, index) => (
+                  {filteredRegistrations.map((user, index) => (
                     <div
                       key={user.regId || index}
                       className="bg-gray-50 rounded-lg p-4 border border-gray-200"
