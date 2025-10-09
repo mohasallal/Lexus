@@ -54,7 +54,7 @@ export default function RegisterForm() {
   }
 
   return (
-    <Card className="w-full h-fit rounded-lg shadow-sm border-gray-200 bg-white">
+    <Card className="w-full h-fit rounded-lg shadow-sm border-gray-200 bg-white pb-0 gap-0">
       <CardHeader className="pb-4">
         <GlassyCard
           className="bg-transparent shadow-none w-full max-w-full py-0 px-0"

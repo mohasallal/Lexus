@@ -24,7 +24,7 @@ interface EventSelectionDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onEventSelect: (activity: Activity) => void;
-  onRegister: () => void;
+  onRegister?: () => void; // Made optional for view-only mode
   user?: User | null;
   users?: User[];
   onUserSelect?: (user: User) => void;
@@ -36,6 +36,7 @@ interface EventSelectionDialogProps {
     endTime: string;
   } | null;
   loading?: boolean;
+  viewMode?: boolean; // Add view mode flag
 }
 
 // Format time to display only time (no date)
@@ -75,20 +76,23 @@ const EventSelectionDialog: React.FC<EventSelectionDialogProps> = ({
   selectedActivity,
   selectedTimeSlot,
   loading = false,
+  viewMode = false,
 }) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
+        <DialogHeader className="p-6">
           <DialogTitle className="flex items-center gap-3">
             <div className="flex items-center justify-center w-12 h-12 bg-black rounded-full">
               <Calendar className="text-white w-6 h-6" />
             </div>
             <div>
               <h2 className="text-xl font-semibold text-gray-900">
-                Register User in Event
+                {viewMode
+                  ? "View Event Registrations"
+                  : "Register User in Event"}
               </h2>
-              {user && (
+              {user && !viewMode && (
                 <p className="text-gray-600 text-sm flex items-center gap-2">
                   <UserIcon className="w-4 h-4" />
                   Registering: {user.fname} {user.lname}
@@ -97,13 +101,15 @@ const EventSelectionDialog: React.FC<EventSelectionDialogProps> = ({
             </div>
           </DialogTitle>
           <DialogDescription>
-            Select an event and time slot to register the user
+            {viewMode
+              ? "Select an event to view registered users"
+              : "Select an event and time slot to register the user"}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <div className="space-y-3 p-6 pt-0">
           {/* User Selection (if no user pre-selected) */}
-          {!user && users.length > 0 && onUserSelect && (
+          {!viewMode && !user && users.length > 0 && onUserSelect && (
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
                 <UserIcon className="w-5 h-5" />
@@ -150,7 +156,7 @@ const EventSelectionDialog: React.FC<EventSelectionDialogProps> = ({
                 <Card
                   key={activity.id}
                   className={`
-                    cursor-pointer transition-all duration-200 hover:shadow-md
+                    cursor-pointer transition-all duration-200 hover:shadow-md py-0
                     ${
                       selectedActivity?.id === activity.id
                         ? "ring-2 ring-black bg-gray-50 border-gray-400"
@@ -204,7 +210,7 @@ const EventSelectionDialog: React.FC<EventSelectionDialogProps> = ({
                 <span className="text-gray-900">{selectedActivity.name}</span>
               </h3>
 
-              {selectedTimeSlot ? (
+              {selectedTimeSlot && (
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-gray-600">Time Slot:</span>
                   <div className="inline-flex items-center gap-2 bg-white px-3 py-1 rounded-md border border-gray-200">
@@ -215,11 +221,6 @@ const EventSelectionDialog: React.FC<EventSelectionDialogProps> = ({
                     </span>
                   </div>
                 </div>
-              ) : (
-                <p className="text-sm text-gray-500 flex items-center gap-2">
-                  <Clock className="w-4 h-4" />
-                  Click Select Time to choose a time slot
-                </p>
               )}
             </div>
           )}
@@ -229,7 +230,7 @@ const EventSelectionDialog: React.FC<EventSelectionDialogProps> = ({
             <Button
               variant="outline"
               onClick={onClose}
-              className="border-gray-300 hover:bg-gray-50 text-gray-700"
+              className="border-gray-300 hover:bg-gray-50 text-gray-700 cursor-pointer"
             >
               <X className="w-4 h-4 mr-2" />
               Cancel
@@ -248,22 +249,24 @@ const EventSelectionDialog: React.FC<EventSelectionDialogProps> = ({
                 </Button>
               )}
 
-              <Button
-                onClick={onRegister}
-                disabled={
-                  !user || !selectedActivity || !selectedTimeSlot || loading
-                }
-                className="bg-black hover:bg-gray-800 text-white"
-              >
-                {loading ? (
-                  <>Registering...</>
-                ) : (
-                  <>
-                    <CheckCircle2 className="w-4 h-4 mr-2" />
-                    Register
-                  </>
-                )}
-              </Button>
+              {!viewMode && onRegister && (
+                <Button
+                  onClick={onRegister}
+                  disabled={
+                    !user || !selectedActivity || !selectedTimeSlot || loading
+                  }
+                  className="bg-black hover:bg-gray-800 text-white"
+                >
+                  {loading ? (
+                    <>Registering...</>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="w-4 h-4 mr-2" />
+                      Register
+                    </>
+                  )}
+                </Button>
+              )}
             </div>
           </div>
         </div>

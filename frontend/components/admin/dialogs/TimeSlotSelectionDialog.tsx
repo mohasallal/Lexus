@@ -24,15 +24,12 @@ interface TimeSlotSelectionDialogProps {
   loading?: boolean;
 }
 
-// Format time to display only time (no date)
 const formatTime = (timeString: string) => {
   try {
-    // If it's already in HH:MM format, return as is
     if (/^\d{1,2}:\d{2}$/.test(timeString)) {
       return timeString;
     }
 
-    // If it's a full datetime string, extract time
     const date = new Date(timeString);
     if (!isNaN(date.getTime())) {
       return date.toLocaleTimeString("en-US", {
@@ -42,7 +39,6 @@ const formatTime = (timeString: string) => {
       });
     }
 
-    // Fallback to original string
     return timeString;
   } catch {
     return timeString;
@@ -60,37 +56,33 @@ const TimeSlotSelectionDialog: React.FC<TimeSlotSelectionDialogProps> = ({
 }) => {
   const { registrations, initializeSocketListeners } = useRegStore();
 
-  // Initialize socket listeners for real-time updates
   React.useEffect(() => {
     if (isOpen) {
       initializeSocketListeners();
     }
   }, [isOpen, initializeSocketListeners]);
 
-  // Function to get live registered count for a time slot
   const getLiveRegisteredCount = (timeSlotId: number) => {
     if (!registrations) return 0;
-    return registrations.filter(reg => reg.timeSlotId === timeSlotId).length;
+    return registrations.filter((reg) => reg.timeSlotId === timeSlotId).length;
   };
+
+  const sortedTimeSlots = React.useMemo(() => {
+    return [...timeSlots].sort((a, b) => {
+      return new Date(a.startTime).getTime() - new Date(b.startTime).getTime();
+    });
+  }, [timeSlots]);
 
   const handleTimeSlotClick = (timeSlot: TimeSlot) => {
     onTimeSlotSelect(timeSlot);
-    onBack(); // Return to event dialog after selection
+    onBack(); 
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
+      <DialogContent className="max-w-4xl max-h-[80vh] flex flex-col">
+        <DialogHeader className="flex-shrink-0">
           <DialogTitle className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onBack}
-              className="p-2 h-8 w-8 hover:bg-gray-100"
-            >
-              <ArrowLeft className="w-4 h-4" />
-            </Button>
             <div className="flex items-center justify-center w-12 h-12 bg-black rounded-full">
               <Clock className="text-white w-6 h-6" />
             </div>
@@ -111,10 +103,11 @@ const TimeSlotSelectionDialog: React.FC<TimeSlotSelectionDialogProps> = ({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6">
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {/* Event Info */}
           {activity && (
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+            <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
               <h3 className="font-medium text-gray-900 mb-2 flex items-center gap-2">
                 <Calendar className="w-5 h-5 text-gray-700" />
                 {activity.name}
@@ -124,41 +117,44 @@ const TimeSlotSelectionDialog: React.FC<TimeSlotSelectionDialogProps> = ({
           )}
 
           {/* Time Slots Grid */}
-          {timeSlots.length > 0 ? (
+          {sortedTimeSlots.length > 0 ? (
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
                 <Clock className="w-5 h-5" />
                 Available Time Slots
               </h3>
-              <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                  {timeSlots.map((timeSlot) => (
+              <div className="bg-white rounded-lg border border-gray-200 p-3 shadow-sm">
+                <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2">
+                  {sortedTimeSlots.map((timeSlot) => (
                     <div
                       key={timeSlot.id}
                       onClick={() => handleTimeSlotClick(timeSlot)}
                       className={`
-                        relative p-4 rounded-lg border-2 cursor-pointer transition-all duration-200
+                        relative p-2 rounded-lg border-2 cursor-pointer transition-all duration-200
+                        flex flex-col justify-center h-20 min-h-[7rem]
                         bg-white hover:bg-gray-50 
                         hover:border-black hover:shadow-md
                         border-gray-200 hover:scale-105
                         ${loading ? "opacity-50 cursor-not-allowed" : ""}
                       `}
                     >
-                      <div className="text-center space-y-2">
-                        <div className="text-lg font-bold text-gray-800">
+                      <div className="text-center space-y-1">
+                        <div className="text-sm font-bold text-gray-800">
                           {formatTime(timeSlot.startTime)}
                         </div>
                         <div className="text-xs text-gray-500 font-medium">
                           to
                         </div>
-                        <div className="text-lg font-bold text-gray-800">
+                        <div className="text-sm font-bold text-gray-800">
                           {formatTime(timeSlot.endTime)}
                         </div>
-                        <div className="mt-3 pt-2 border-t border-gray-200">
+                        <div className="pt-1 border-t border-gray-200">
                           <div className="text-xs text-gray-600">
                             <span className="inline-flex items-center gap-1">
                               <Users className="w-3 h-3" />
-                              {timeSlot.maxParticipants - getLiveRegisteredCount(timeSlot.id)} left
+                              {timeSlot.maxParticipants -
+                                getLiveRegisteredCount(timeSlot.id)}{" "}
+                              left
                             </span>
                           </div>
                         </div>
@@ -172,9 +168,9 @@ const TimeSlotSelectionDialog: React.FC<TimeSlotSelectionDialogProps> = ({
               </div>
             </div>
           ) : (
-            <div className="text-center py-12">
+            <div className="text-center py-8">
               <div className="text-gray-400 mb-4">
-                <Clock className="w-16 h-16 mx-auto" />
+                <Clock className="w-12 h-12 mx-auto" />
               </div>
               <h3 className="text-lg font-medium text-gray-900 mb-2">
                 No Time Slots Available
@@ -184,13 +180,15 @@ const TimeSlotSelectionDialog: React.FC<TimeSlotSelectionDialogProps> = ({
               </p>
             </div>
           )}
+        </div>
 
-          {/* Action Buttons */}
-          <div className="flex justify-between pt-4">
+        {/* Fixed Action Buttons */}
+        <div className="flex-shrink-0 border-t border-gray-200 p-4">
+          <div className="flex justify-between">
             <Button
               variant="outline"
               onClick={onBack}
-              className="border-gray-300 hover:bg-gray-50 text-gray-700"
+              className="border-gray-300 hover:bg-gray-50 text-gray-700 cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Event Selection
@@ -199,7 +197,7 @@ const TimeSlotSelectionDialog: React.FC<TimeSlotSelectionDialogProps> = ({
             <Button
               variant="outline"
               onClick={onClose}
-              className="border-gray-300 hover:bg-gray-50 text-gray-700"
+              className="border-gray-300 hover:bg-gray-50 text-gray-700 cursor-pointer"
             >
               Cancel
             </Button>

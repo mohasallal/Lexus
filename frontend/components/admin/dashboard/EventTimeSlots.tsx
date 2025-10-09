@@ -13,7 +13,6 @@ import { useActivitiesStore } from "@/store/activities";
 import { useTimeSlotsStore } from "@/store/timeslots";
 import { useRegStore } from "@/store/registeration";
 
-
 import { Activity } from "@/types/activities";
 import { TimeSlot } from "@/types/timeslots";
 import EventSelectionDialog from "@/components/admin/dialogs/EventSelectionDialog";
@@ -23,7 +22,12 @@ import UserSvg from "@/components/svgs/user";
 const EventTimeSlots = () => {
   const { activities, getActivities } = useActivitiesStore();
   const { timeSlots, getTimeSlots } = useTimeSlotsStore();
-  const { loading, registrations, initializeSocketListeners, getAllRegistrations } = useRegStore();
+  const {
+    loading,
+    registrations,
+    initializeSocketListeners,
+    getAllRegistrations,
+  } = useRegStore();
 
   const [isEventDialogOpen, setIsEventDialogOpen] = useState(false);
   const [isTimeSlotDialogOpen, setIsTimeSlotDialogOpen] = useState(false);
@@ -39,17 +43,23 @@ const EventTimeSlots = () => {
   const [viewTimeSlots, setViewTimeSlots] = useState<TimeSlot[]>([]);
 
   // Compute filtered registrations from store based on selected activity and time slot
-  const filteredRegistrations = selectedActivity && selectedTimeSlot && registrations
-    ? registrations.filter(reg => 
-        reg.activity?.id === selectedActivity.id && 
-        reg.timeSlotId === selectedTimeSlot.id
-      ).map(reg => ({
-        regId: reg.id,
-        userName: `${reg.user?.fname || ''} ${reg.user?.lname || ''}`.trim() || 'Unknown',
-        userEmail: reg.user?.email || '',
-        userPhone: reg.user?.phone
-      }))
-    : [];
+  const filteredRegistrations =
+    selectedActivity && selectedTimeSlot && registrations
+      ? registrations
+          .filter(
+            (reg) =>
+              reg.activity?.id === selectedActivity.id &&
+              reg.timeSlotId === selectedTimeSlot.id
+          )
+          .map((reg) => ({
+            regId: reg.id,
+            userName:
+              `${reg.user?.fname || ""} ${reg.user?.lname || ""}`.trim() ||
+              "Unknown",
+            userEmail: reg.user?.email || "",
+            userPhone: reg.user?.phone,
+          }))
+      : [];
 
   useEffect(() => {
     getActivities();
@@ -66,7 +76,13 @@ const EventTimeSlots = () => {
     setSelectedActivity(activity);
     const activityTimeSlots =
       timeSlots?.filter((slot) => slot.activityId === activity.id) || [];
-    setViewTimeSlots(activityTimeSlots);
+
+    // Sort time slots by start time chronologically
+    const sortedTimeSlots = activityTimeSlots.sort((a, b) => {
+      return new Date(a.startTime).getTime() - new Date(b.startTime).getTime();
+    });
+
+    setViewTimeSlots(sortedTimeSlots);
     setSelectedTimeSlot(null);
   };
 
@@ -125,12 +141,15 @@ const EventTimeSlots = () => {
               {selectedTimeSlot && (
                 <>
                   <span>→</span>
-                  <span className={`px-2 py-1 rounded border font-medium ${
-                    filteredRegistrations.length > 0 
-                      ? 'bg-green-100 text-green-800 border-green-200' 
-                      : 'bg-gray-100 text-gray-600 border-gray-200'
-                  }`}>
-                    {filteredRegistrations.length} user{filteredRegistrations.length !== 1 ? 's' : ''} registered
+                  <span
+                    className={`px-2 py-1 rounded border font-medium ${
+                      filteredRegistrations.length > 0
+                        ? "bg-green-100 text-green-800 border-green-200"
+                        : "bg-gray-100 text-gray-600 border-gray-200"
+                    }`}
+                  >
+                    {filteredRegistrations.length} user
+                    {filteredRegistrations.length !== 1 ? "s" : ""} registered
                   </span>
                 </>
               )}
@@ -155,9 +174,9 @@ const EventTimeSlots = () => {
             setIsEventDialogOpen(false);
             setIsTimeSlotDialogOpen(true);
           }}
-          onRegister={() => {}} // Not used in this context
           activities={activities || []}
           selectedActivity={selectedActivity}
+          viewMode={true} // Enable view mode to hide register functionality
         />
 
         {/* Time Slot Selection Dialog */}
@@ -166,9 +185,7 @@ const EventTimeSlots = () => {
           onClose={() => setIsTimeSlotDialogOpen(false)}
           onTimeSlotSelect={async (timeSlot) => {
             setIsTimeSlotDialogOpen(false);
-            // Show the dialog immediately with loading state
             setIsRegistreesDialogOpen(true);
-            // Then fetch the data
             await handleTimeSlotSelect(timeSlot);
           }}
           onBack={() => {
@@ -179,7 +196,6 @@ const EventTimeSlots = () => {
           timeSlots={viewTimeSlots}
         />
 
-        {/* Registered Users Dialog */}
         <Dialog
           open={isRegistreesDialogOpen}
           onOpenChange={setIsRegistreesDialogOpen}

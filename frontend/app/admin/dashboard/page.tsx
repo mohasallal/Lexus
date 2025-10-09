@@ -7,7 +7,6 @@ const page = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header Section */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Admin Dashboard
@@ -17,7 +16,6 @@ const page = () => {
           </p>
         </div>
 
-        {/* Top Row - Register Form and Statistics */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           <div className="xl:col-span-2">
             <RegisterForm />
@@ -27,7 +25,6 @@ const page = () => {
           </div>
         </div>
 
-        {/* Bottom Row - Main Management Components */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
           <div>
             <RegisteredGuests />

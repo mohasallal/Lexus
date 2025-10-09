@@ -67,25 +67,25 @@ const Statistics = () => {
             value={guestsCount}
             label="عدد الضيوف"
             fontColor="text-gray-800"
-            bgColor="bg-blue-50 border border-blue-100"
+            bgColor="bg-gray-200 border border-blue-100"
           />
           <Box
             value={activitiesCount}
             label="عدد الفعاليات"
             fontColor="text-gray-800"
-            bgColor="bg-green-50 border border-green-100"
+            bgColor="bg-gray-200 border border-green-100"
           />
           <Box
             value={registrationsCount}
             label="عدد التسجيلات"
             fontColor="text-gray-800"
-            bgColor="bg-purple-50 border border-purple-100"
+            bgColor="bg-gray-200 border border-purple-100"
           />
           <Box
             value={timeSlotsCount}
             label="عدد الأوقات المتاحة"
             fontColor="text-gray-800"
-            bgColor="bg-amber-50 border border-amber-100"
+            bgColor="bg-gray-200 border border-amber-100"
           />
         </div>
       </CardContent>

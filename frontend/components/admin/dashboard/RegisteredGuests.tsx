@@ -245,7 +245,7 @@ const RegisteredGuests = () => {
   return (
     <>
       <Card className="w-full h-fit rounded-lg shadow-sm border-gray-200 bg-white">
-        <CardHeader className="pb-4">
+        <CardHeader className="py-0">
           <GlassyCard
             className="bg-transparent shadow-none w-full max-w-full py-0 px-0"
             icon={<UserIcon className="w-5 h-5 text-white" />}
@@ -256,7 +256,7 @@ const RegisteredGuests = () => {
           />
           <hr className="border-gray-200" />
         </CardHeader>
-        <CardContent className="pb-6">
+        <CardContent className="py-0">
           <div className="max-h-96 overflow-y-auto border border-gray-100 rounded-lg">
             {users && users.length > 0 ? (
               <Table>
@@ -318,10 +318,8 @@ const RegisteredGuests = () => {
         </CardContent>
       </Card>
 
-      {/* Registration Dialogs */}
-      {/* User Details Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-4">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-3">
               <div className="flex items-center justify-center w-12 h-12 bg-gray-800 rounded-full">
@@ -448,7 +446,7 @@ const RegisteredGuests = () => {
                                 handleRemoveRegistration(registration.id);
                             }}
                             disabled={loading || !registration.id}
-                            className="ml-4 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300"
+                            className="ml-4 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 cursor-pointer"
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
@@ -471,18 +469,16 @@ const RegisteredGuests = () => {
                 )}
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex justify-between pt-4">
+              <div className="flex justify-between">
                 <Button
                   variant="outline"
                   onClick={() => {
                     setIsDialogOpen(false);
-                    // Also close registration dialog if it's open
                     if (isRegisterDialogOpen) {
                       handleRegisterDialogClose();
                     }
                   }}
-                  className="px-8 border-gray-300 hover:bg-gray-50 text-gray-700"
+                  className="px-8 border-gray-300 hover:bg-gray-50 text-gray-700 cursor-pointer"
                 >
                   <X className="w-4 h-4 mr-2" />
                   Close
@@ -493,7 +489,7 @@ const RegisteredGuests = () => {
                     // Open registration dialog for this user
                     setIsRegisterDialogOpen(true);
                   }}
-                  className="bg-black hover:bg-gray-800 text-white px-6"
+                  className="bg-black hover:bg-gray-800 text-white px-6 cursor-pointer"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Register in Activity
