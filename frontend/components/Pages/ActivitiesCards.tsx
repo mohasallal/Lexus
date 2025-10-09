@@ -41,12 +41,17 @@ const ActivitiesCards = () => {
 
   const getLiveRegisteredCount = (timeSlotId: number) => {
     if (!registrations) {
-      console.log('No registrations data available');
+      console.log("No registrations data available");
       return 0;
     }
-    const filtered = registrations.filter((reg) => reg.timeSlotId === timeSlotId);
-    console.log(`TimeSlot ${timeSlotId}: found ${filtered.length} registrations`, filtered);
-    console.log('All registrations:', registrations);
+    const filtered = registrations.filter(
+      (reg) => reg.timeSlotId === timeSlotId
+    );
+    console.log(
+      `TimeSlot ${timeSlotId}: found ${filtered.length} registrations`,
+      filtered
+    );
+    console.log("All registrations:", registrations);
     return filtered.length;
   };
 
@@ -80,7 +85,6 @@ const ActivitiesCards = () => {
       setLoadingActivity(null);
     }
   };
-  
 
   if (loading) {
     return (
@@ -245,11 +249,17 @@ const ActivitiesCards = () => {
                     </div>
                     <div className="text-sm text-white/80 font-medium">
                       {(() => {
-                        const registeredCount = getLiveRegisteredCount(timeSlot.id);
-                        const seatsLeft = timeSlot.maxParticipants - registeredCount;
-                        console.log(`TimeSlot ${timeSlot.id}: maxParticipants=${timeSlot.maxParticipants}, registeredCount=${registeredCount}, seatsLeft=${seatsLeft}`);
+                        const registeredCount = getLiveRegisteredCount(
+                          timeSlot.id
+                        );
+                        const seatsLeft =
+                          timeSlot.maxParticipants - registeredCount;
+                        console.log(
+                          `TimeSlot ${timeSlot.id}: maxParticipants=${timeSlot.maxParticipants}, registeredCount=${registeredCount}, seatsLeft=${seatsLeft}`
+                        );
                         return seatsLeft;
-                      })()} seats left
+                      })()}{" "}
+                      seats left
                     </div>
                   </div>
                 ))}
