@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useActivitiesStore } from "@/store/activities";
 import { useTimeSlotsStore } from "@/store/timeslots";
+import { useRegStore } from "@/store/registeration";
 import { TimeSlot } from "@/types/timeslots";
 import { Activity } from "@/types/activities";
 import Image from "next/image";
@@ -25,8 +26,8 @@ import {
 
 const ActivitiesCards = () => {
   const { activities, loading, error, getActivities } = useActivitiesStore();
-  const { getTimeSlotsByActivity, loading: timeSlotsLoading } =
-    useTimeSlotsStore();
+  const { getTimeSlotsByActivity } = useTimeSlotsStore();
+  const { registrations, initializeSocketListeners } = useRegStore();
 
   const [activityTimeSlots, setActivityTimeSlots] = useState<
     Record<number, TimeSlot[]>
@@ -37,6 +38,23 @@ const ActivitiesCards = () => {
   const [selectedActivity, setSelectedActivity] = useState<Activity | null>(
     null
   );
+
+  const getLiveRegisteredCount = (timeSlotId: number) => {
+    if (!registrations) {
+      console.log('No registrations data available');
+      return 0;
+    }
+    const filtered = registrations.filter((reg) => reg.timeSlotId === timeSlotId);
+    console.log(`TimeSlot ${timeSlotId}: found ${filtered.length} registrations`, filtered);
+    console.log('All registrations:', registrations);
+    return filtered.length;
+  };
+
+  useEffect(() => {
+    if (dialogOpen) {
+      initializeSocketListeners();
+    }
+  }, [dialogOpen, initializeSocketListeners]);
 
   useEffect(() => {
     getActivities();
@@ -62,6 +80,7 @@ const ActivitiesCards = () => {
       setLoadingActivity(null);
     }
   };
+  
 
   if (loading) {
     return (
@@ -212,7 +231,7 @@ const ActivitiesCards = () => {
                 {activityTimeSlots[selectedActivity.id].map((timeSlot) => (
                   <div
                     key={timeSlot.id}
-                    className="p-4 bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 hover:border-white/30 transition-all duration-300 cursor-pointer text-center rounded-lg"
+                    className="p-4 bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 hover:border-white/30 transition-all duration-300 text-center rounded-lg"
                   >
                     <div className="font-semibold text-lg text-white mb-2">
                       {new Date(timeSlot.startTime).toLocaleTimeString(
@@ -225,7 +244,12 @@ const ActivitiesCards = () => {
                       )}
                     </div>
                     <div className="text-sm text-white/80 font-medium">
-                      {timeSlot.availableSeats} seats
+                      {(() => {
+                        const registeredCount = getLiveRegisteredCount(timeSlot.id);
+                        const seatsLeft = timeSlot.maxParticipants - registeredCount;
+                        console.log(`TimeSlot ${timeSlot.id}: maxParticipants=${timeSlot.maxParticipants}, registeredCount=${registeredCount}, seatsLeft=${seatsLeft}`);
+                        return seatsLeft;
+                      })()} seats left
                     </div>
                   </div>
                 ))}
