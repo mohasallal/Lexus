@@ -2,6 +2,8 @@ import { create } from "zustand";
 import api from "@/utils/api";
 import { User } from "../types/auth";
 import { socket } from "@/lib/socket";
+import { toast } from "sonner";
+import axios from "axios";
 
 interface AuthState {
   user: User | null;
@@ -64,8 +66,23 @@ export const useAuthStore = create<AuthState>((set) => ({
       const { token, user, message } = res.data;
       localStorage.setItem("token", token);
       set({ user, token, message, loading: false });
+      // Show success toast
+      if (message) {
+        toast.success(message);
+      }
     } catch (error) {
-      set({ error: "Login failed " + error, loading: false });
+      let errorMessage = "Login failed";
+
+      // Extract message from axios error response
+      if (axios.isAxiosError(error) && error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+
+      set({ error: errorMessage, loading: false });
+      // Show error toast
+      toast.error(errorMessage);
     }
   },
 
@@ -81,8 +98,23 @@ export const useAuthStore = create<AuthState>((set) => ({
       });
       const { message } = res.data;
       set({ message, loading: false });
+      // Show success toast
+      if (message) {
+        toast.success(message);
+      }
     } catch (error) {
-      set({ error: "Registration failed " + error, loading: false });
+      let errorMessage = "Registration failed";
+
+      // Extract message from axios error response
+      if (axios.isAxiosError(error) && error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+
+      set({ error: errorMessage, loading: false });
+      // Show error toast
+      toast.error(errorMessage);
     }
   },
 
@@ -93,7 +125,18 @@ export const useAuthStore = create<AuthState>((set) => ({
       const { users } = res.data;
       set({ users, loading: false });
     } catch (error) {
-      set({ error: "Failed to fetch users " + error, loading: false });
+      let errorMessage = "Failed to fetch users";
+
+      // Extract message from axios error response
+      if (axios.isAxiosError(error) && error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+
+      set({ error: errorMessage, loading: false });
+      // Show error toast
+      toast.error(errorMessage);
     }
   },
 
@@ -106,14 +149,31 @@ export const useAuthStore = create<AuthState>((set) => ({
       set((state) => ({
         user: state.user?.id === id ? user : state.user,
       }));
+      // Show success toast
+      if (message) {
+        toast.success(message);
+      }
     } catch (error) {
-      set({ error: "Role update failed " + error, loading: false });
+      let errorMessage = "Role update failed";
+
+      // Extract message from axios error response
+      if (axios.isAxiosError(error) && error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+
+      set({ error: errorMessage, loading: false });
+      // Show error toast
+      toast.error(errorMessage);
     }
   },
 
   logout: () => {
     localStorage.removeItem("token");
     set({ user: null, token: null, message: "Logged out successfully" });
+    // Show success toast
+    toast.success("Logged out successfully");
   },
 
   initializeSocketListeners: () => {

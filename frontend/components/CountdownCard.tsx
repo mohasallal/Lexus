@@ -41,15 +41,15 @@ const CountdownCard: React.FC = () => {
     <Card className="bg-white/6 backdrop-blur-md border-white/20 border p-0 shadow-lg w-full mx-auto text-white gap-1">
       <CardHeader className="px-4 pt-4">
         <CardTitle className="text-lg font-medium text-center">
-          الوقت المتبقي للمؤتمر
+          Event Countdown{" "}
         </CardTitle>
       </CardHeader>
       <CardContent className="px-4 pb-4">
         <div className="mt-3 grid grid-cols-2 gap-4">
-          <Box value={num(timeLeft.hours)} label="ساعات" />
-          <Box value={num(timeLeft.days)} label="أيام" />
-          <Box value={num(timeLeft.seconds)} label="ثواني" />
-          <Box value={num(timeLeft.minutes)} label="دقائق" />
+          <Box value={num(timeLeft.days)} label="Days" />
+          <Box value={num(timeLeft.hours)} label="Hours" />
+          <Box value={num(timeLeft.minutes)} label="Minutes" />
+          <Box value={num(timeLeft.seconds)} label="Seconds" />
         </div>
       </CardContent>
     </Card>

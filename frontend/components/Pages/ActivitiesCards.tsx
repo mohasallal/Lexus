@@ -132,7 +132,7 @@ const ActivitiesCards = () => {
                         />
                       </svg>
                     </div>
-                    <p className="text-sm">صورة النشاط</p>
+                    <p className="text-sm">Activity Image</p>
                   </div>
                 </div>
               </CardContent>
@@ -155,7 +155,7 @@ const ActivitiesCards = () => {
                   {loadingActivity === activity.id ? (
                     <>
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      جاري البحث...
+                      Searching...
                     </>
                   ) : (
                     <>
@@ -172,7 +172,7 @@ const ActivitiesCards = () => {
                           d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                         />
                       </svg>
-                      اكتشف الأوقات المتاحة
+                      Discover Available Times
                     </>
                   )}
                 </Button>
@@ -187,7 +187,7 @@ const ActivitiesCards = () => {
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle className="text-right">
-              {selectedActivity?.name} - الأوقات المتاحة
+              {selectedActivity?.name} - Available Times
             </DialogTitle>
             <DialogDescription className="text-right">
               اختر الوقت المناسب لك من الأوقات المتاحة أدناه
@@ -215,7 +215,7 @@ const ActivitiesCards = () => {
                       )}
                     </div>
                     <div className="text-sm text-primary font-medium">
-                      {timeSlot.availableSeats} مقعد
+                      {timeSlot.availableSeats} seats
                     </div>
                   </div>
                 ))}

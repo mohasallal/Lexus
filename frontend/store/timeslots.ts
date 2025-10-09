@@ -2,6 +2,8 @@ import api from "@/utils/api";
 import { create } from "zustand";
 import { TimeSlot } from "@/types/timeslots";
 import { socket } from "@/lib/socket";
+import { toast } from "sonner";
+import axios from "axios";
 
 interface TimeSlotsState {
   timeSlots: TimeSlot[] | null;
@@ -61,12 +63,23 @@ export const useTimeSlotsStore = create<TimeSlotsState>((set) => ({
         message: res.data.message,
         error: null,
       }));
+      // Show success toast
+      if (res.data.message) {
+        toast.success(res.data.message);
+      }
     } catch (error) {
-      let errorMessage = "An unexpected error occurred";
-      if (error instanceof Error) {
+      let errorMessage = "Failed to create time slot";
+
+      // Extract message from axios error response
+      if (axios.isAxiosError(error) && error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error instanceof Error) {
         errorMessage = error.message;
       }
+
       set({ error: errorMessage, message: null });
+      // Show error toast
+      toast.error(errorMessage);
     } finally {
       set({ loading: false });
     }
@@ -78,11 +91,18 @@ export const useTimeSlotsStore = create<TimeSlotsState>((set) => ({
       validateResponse(res, "timeSlots");
       set({ timeSlots: res.data.timeSlots, error: null });
     } catch (error) {
-      let errorMessage = "An unexpected error occurred";
-      if (error instanceof Error) {
+      let errorMessage = "Failed to fetch time slots";
+
+      // Extract message from axios error response
+      if (axios.isAxiosError(error) && error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error instanceof Error) {
         errorMessage = error.message;
       }
+
       set({ error: errorMessage });
+      // Show error toast
+      toast.error(errorMessage);
     } finally {
       set({ loading: false });
     }
@@ -146,12 +166,23 @@ export const useTimeSlotsStore = create<TimeSlotsState>((set) => ({
         message: res.data.message,
         error: null,
       }));
+      // Show success toast
+      if (res.data.message) {
+        toast.success(res.data.message);
+      }
     } catch (error) {
-      let errorMessage = "An unexpected error occurred";
-      if (error instanceof Error) {
+      let errorMessage = "Failed to update time slot";
+
+      // Extract message from axios error response
+      if (axios.isAxiosError(error) && error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error instanceof Error) {
         errorMessage = error.message;
       }
+
       set({ error: errorMessage });
+      // Show error toast
+      toast.error(errorMessage);
     } finally {
       set({ loading: false });
     }
@@ -168,12 +199,23 @@ export const useTimeSlotsStore = create<TimeSlotsState>((set) => ({
         message: res.data.message,
         error: null,
       }));
+      // Show success toast
+      if (res.data.message) {
+        toast.success(res.data.message);
+      }
     } catch (error) {
-      let errorMessage = "An unexpected error occurred";
-      if (error instanceof Error) {
+      let errorMessage = "Failed to delete time slot";
+
+      // Extract message from axios error response
+      if (axios.isAxiosError(error) && error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error instanceof Error) {
         errorMessage = error.message;
       }
+
       set({ error: errorMessage });
+      // Show error toast
+      toast.error(errorMessage);
     } finally {
       set({ loading: false });
     }

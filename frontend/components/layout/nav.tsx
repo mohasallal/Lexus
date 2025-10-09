@@ -7,10 +7,9 @@ import { useAuthStore } from "@/store/auth";
 import UserSvg from "../svgs/user";
 import LogOutSvg from "../svgs/logout";
 import { useEffect, useState } from "react";
-import MenuSvg from "../svgs/menu";
-import XSvg from "../svgs/x";
 import LangSvg from "../svgs/lang";
 import GlassyCard from "../GlassyCard";
+import { Menu, X } from "lucide-react";
 
 const NavBar = () => {
   const { user, isInitialized, initialize, logout } = useAuthStore();
@@ -56,7 +55,7 @@ const NavBar = () => {
                     onClick={logout}
                   >
                     <LogOutSvg width={20} height={20} fill="white" />
-                    تسجيل الخروج
+                    Logout{" "}
                   </Button>
                   <Link
                     href="/admin/dashboard"
@@ -64,7 +63,7 @@ const NavBar = () => {
                   >
                     <GlassyCard
                       icon={<UserSvg />}
-                      title="اهلا و سهلا مجددا"
+                      title="Welcome Back"
                       subtitle={`${user.role}`}
                       className="pr-4"
                     />
@@ -75,27 +74,20 @@ const NavBar = () => {
                   variant={"ghost"}
                   className="text-white hover:text-white cursor-pointer hover:bg-gray-600"
                 >
-                  <Link href="/auth/login"> مكتب الاستقبال</Link>
+                  <Link href="/auth/login">Reception Desk</Link>
                 </Button>
               ))}
-
-            <Button
-              variant={"ghost"}
-              className="text-white hover:text-white cursor-pointer hover:bg-gray-600"
-            >
-              English
-            </Button>
           </div>
 
           <div className="lg:hidden">
             <Button
               variant={"ghost"}
-              className="text-white hover:text-white cursor-pointer hover:bg-gray-600 p-4"
+              className="text-white hover:text-white cursor-pointer hover:bg-gray-600 p-0"
               onClick={toggleMobileMenu}
               aria-label="Toggle mobile menu"
             >
               <div className="w-20 h-20 flex flex-col justify-center items-center">
-                <MenuSvg width={24} height={24} />
+                <Menu />
               </div>
             </Button>
           </div>
@@ -140,7 +132,7 @@ const NavBar = () => {
         }`}
       >
         <div className="flex items-center justify-between p-6 border-b border-gray-700">
-          <h2 className="text-white text-lg font-semibold">القائمة</h2>
+          <h2 className="text-white text-lg font-semibold">Menu</h2>
           <Button
             variant={"ghost"}
             className="text-white hover:text-white cursor-pointer hover:bg-gray-600 p-4"
@@ -148,7 +140,7 @@ const NavBar = () => {
             aria-label="Close mobile menu"
           >
             <div className="w-10 h-10 flex items-center justify-center">
-              <XSvg />
+              <X />
             </div>
           </Button>
         </div>
@@ -160,42 +152,33 @@ const NavBar = () => {
                 <Link
                   href="/admin/dashboard"
                   onClick={closeMobileMenu}
-                  className="flex items-center gap-3 text-white hover:bg-gray-700 p-4 rounded-lg transition-colors"
+                  className="flex items-center gap-3 text-white hover:bg-gray-700 hover:text-white p-4 rounded-lg transition-colors"
                 >
                   <UserSvg width={24} height={24} fill="white" />
-                  <span className="text-lg">لوحة التحكم</span>
+                  <span className="text-lg">Dashbaord</span>
                 </Link>
                 <Button
                   variant={"ghost"}
-                  className="flex items-center gap-3 text-white hover:bg-gray-700 p-4 rounded-lg transition-colors justify-start"
+                  className="flex items-center gap-3 text-white hover:bg-gray-700 hover:text-white p-4 rounded-lg transition-colors justify-start"
                   onClick={() => {
                     logout();
                     closeMobileMenu();
                   }}
                 >
                   <LogOutSvg width={24} height={24} fill="white" />
-                  <span className="text-lg">تسجيل الخروج</span>
+                  <span className="text-lg">Log out</span>
                 </Button>
               </>
             ) : (
               <Link
                 href="/auth/login"
                 onClick={closeMobileMenu}
-                className="flex items-center gap-3 text-white hover:bg-gray-700 p-4 rounded-lg transition-colors"
+                className="flex items-center gap-3 text-white hover:bg-gray-700 hover:text-white p-4 rounded-lg transition-colors"
               >
                 <UserSvg width={24} height={24} fill="white" />
-                <span className="text-lg">مكتب الاستقبال</span>
+                <span className="text-lg">Reception Desk</span>
               </Link>
             ))}
-
-          <Button
-            variant={"ghost"}
-            className="flex items-center gap-3 text-white hover:bg-gray-700 p-4 rounded-lg transition-colors justify-start"
-            onClick={closeMobileMenu}
-          >
-            <LangSvg width={32} height={32} fill="white" />
-            <span className="text-lg">English</span>
-          </Button>
         </div>
 
         <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-gray-700">

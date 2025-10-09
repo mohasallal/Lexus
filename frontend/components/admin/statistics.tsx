@@ -65,25 +65,25 @@ const Statistics = () => {
         <div className="grid grid-cols-2 gap-3">
           <Box
             value={guestsCount}
-            label="عدد الضيوف"
+            label="Guests Count"
             fontColor="text-gray-800"
             bgColor="bg-gray-200 border border-blue-100"
           />
           <Box
             value={activitiesCount}
-            label="عدد الفعاليات"
+            label="Activities Count"
             fontColor="text-gray-800"
             bgColor="bg-gray-200 border border-green-100"
           />
           <Box
             value={registrationsCount}
-            label="عدد التسجيلات"
+            label="Registrations Count"
             fontColor="text-gray-800"
             bgColor="bg-gray-200 border border-purple-100"
           />
           <Box
             value={timeSlotsCount}
-            label="عدد الأوقات المتاحة"
+            label="Available Time Slots"
             fontColor="text-gray-800"
             bgColor="bg-gray-200 border border-amber-100"
           />

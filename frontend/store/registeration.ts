@@ -2,6 +2,8 @@ import { create } from "zustand";
 import api from "@/utils/api";
 import { Registration } from "@/types/registration";
 import { socket } from "@/lib/socket";
+import { toast } from "sonner";
+import axios from "axios";
 
 interface RegisteredUserData {
   regId: number;
@@ -58,12 +60,23 @@ export const useRegStore = create<RegistrationsState>((set) => ({
         message: res.data.message,
         error: null,
       }));
+      // Show success toast
+      if (res.data.message) {
+        toast.success(res.data.message);
+      }
     } catch (error) {
       let errorMessage = "An unexpected error occurred";
-      if (error instanceof Error) {
+
+      // Extract message from axios error response
+      if (axios.isAxiosError(error) && error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error instanceof Error) {
         errorMessage = error.message;
       }
+
       set({ error: errorMessage, message: null });
+      // Show error toast
+      toast.error(errorMessage);
     } finally {
       set({ loading: false });
     }
@@ -76,11 +89,18 @@ export const useRegStore = create<RegistrationsState>((set) => ({
       validateResponse(res, "registrations");
       set({ registrations: res.data.registrations, error: null });
     } catch (error) {
-      let errorMessage = "An unexpected error occurred";
-      if (error instanceof Error) {
+      let errorMessage = "Failed to fetch registrations";
+
+      // Extract message from axios error response
+      if (axios.isAxiosError(error) && error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error instanceof Error) {
         errorMessage = error.message;
       }
+
       set({ error: errorMessage });
+      // Show error toast
+      toast.error(errorMessage);
     } finally {
       set({ loading: false });
     }
@@ -129,11 +149,18 @@ export const useRegStore = create<RegistrationsState>((set) => ({
       validateResponse(res, "registrations");
       return res.data.registrations;
     } catch (error) {
-      let errorMessage = "An unexpected error occurred";
-      if (error instanceof Error) {
+      let errorMessage = "Failed to fetch registrations for time slot";
+
+      // Extract message from axios error response
+      if (axios.isAxiosError(error) && error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error instanceof Error) {
         errorMessage = error.message;
       }
+
       set({ error: errorMessage });
+      // Show error toast
+      toast.error(errorMessage);
       return null;
     } finally {
       set({ loading: false });
@@ -152,12 +179,23 @@ export const useRegStore = create<RegistrationsState>((set) => ({
         message: res.data.message,
         error: null,
       }));
+      // Show success toast
+      if (res.data.message) {
+        toast.success(res.data.message);
+      }
     } catch (error) {
-      let errorMessage = "An unexpected error occurred";
-      if (error instanceof Error) {
+      let errorMessage = "Failed to delete registration";
+
+      // Extract message from axios error response
+      if (axios.isAxiosError(error) && error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error instanceof Error) {
         errorMessage = error.message;
       }
+
       set({ error: errorMessage });
+      // Show error toast
+      toast.error(errorMessage);
     } finally {
       set({ loading: false });
     }
@@ -172,11 +210,18 @@ export const useRegStore = create<RegistrationsState>((set) => ({
       validateResponse(res, "registrations");
       return res.data.registrations;
     } catch (error) {
-      let errorMessage = "An unexpected error occurred";
-      if (error instanceof Error) {
+      let errorMessage = "Failed to fetch registrations";
+
+      // Extract message from axios error response
+      if (axios.isAxiosError(error) && error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error instanceof Error) {
         errorMessage = error.message;
       }
+
       set({ error: errorMessage });
+      // Show error toast
+      toast.error(errorMessage);
       return null;
     } finally {
       set({ loading: false });

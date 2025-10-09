@@ -42,7 +42,6 @@ const EventTimeSlots = () => {
 
   const [viewTimeSlots, setViewTimeSlots] = useState<TimeSlot[]>([]);
 
-  // Compute filtered registrations from store based on selected activity and time slot
   const filteredRegistrations =
     selectedActivity && selectedTimeSlot && registrations
       ? registrations
@@ -64,10 +63,9 @@ const EventTimeSlots = () => {
   useEffect(() => {
     getActivities();
     getTimeSlots();
-    getAllRegistrations(); // Load all registrations for filtering
+    getAllRegistrations();
   }, [getActivities, getTimeSlots, getAllRegistrations]);
 
-  // Initialize socket listeners for real-time updates
   useEffect(() => {
     initializeSocketListeners();
   }, [initializeSocketListeners]);
@@ -77,7 +75,6 @@ const EventTimeSlots = () => {
     const activityTimeSlots =
       timeSlots?.filter((slot) => slot.activityId === activity.id) || [];
 
-    // Sort time slots by start time chronologically
     const sortedTimeSlots = activityTimeSlots.sort((a, b) => {
       return new Date(a.startTime).getTime() - new Date(b.startTime).getTime();
     });
@@ -88,8 +85,6 @@ const EventTimeSlots = () => {
 
   const handleTimeSlotSelect = async (timeSlot: TimeSlot) => {
     setSelectedTimeSlot(timeSlot);
-    // No need to set local state - filteredRegistrations will compute automatically
-    // and real-time updates will come through socket events
   };
 
   const resetSelection = () => {
@@ -103,15 +98,14 @@ const EventTimeSlots = () => {
 
   return (
     <Card className="w-full h-fit rounded-lg shadow-sm border-gray-200 bg-white">
-      <CardHeader className="pb-4">
+      <CardHeader className="pb-0">
         <CardTitle className="flex items-center gap-2 text-gray-900">
           <Eye className="w-5 h-5 text-gray-700" />
           View Event Registrations
         </CardTitle>
         <hr className="border-gray-200" />
       </CardHeader>
-      <CardContent className="space-y-4 pb-6">
-        {/* Main Button to Start Flow */}
+      <CardContent className="space-y-4 pb-0">
         <Button
           className="w-full bg-gray-800 text-white hover:bg-gray-900 transition-colors"
           onClick={() => setIsEventDialogOpen(true)}
@@ -120,7 +114,6 @@ const EventTimeSlots = () => {
           View Event Registrations
         </Button>
 
-        {/* Current Selection Display */}
         {(selectedActivity || selectedTimeSlot) && (
           <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
             <h4 className="font-medium text-gray-900 mb-2">Last Selection:</h4>
@@ -165,7 +158,6 @@ const EventTimeSlots = () => {
           </div>
         )}
 
-        {/* Event Selection Dialog */}
         <EventSelectionDialog
           isOpen={isEventDialogOpen}
           onClose={() => setIsEventDialogOpen(false)}
@@ -176,10 +168,9 @@ const EventTimeSlots = () => {
           }}
           activities={activities || []}
           selectedActivity={selectedActivity}
-          viewMode={true} // Enable view mode to hide register functionality
+          viewMode={true}
         />
 
-        {/* Time Slot Selection Dialog */}
         <TimeSlotSelectionDialog
           isOpen={isTimeSlotDialogOpen}
           onClose={() => setIsTimeSlotDialogOpen(false)}
@@ -200,7 +191,7 @@ const EventTimeSlots = () => {
           open={isRegistreesDialogOpen}
           onOpenChange={setIsRegistreesDialogOpen}
         >
-          <DialogContent className="max-w-2xl max-h-[80vh] overflow-hidden flex flex-col">
+          <DialogContent className="max-h-[60vh] w-2xl overflow-hidden flex flex-col">
             <DialogHeader>
               <div className="flex items-center justify-between">
                 <div className="flex-1">

@@ -51,6 +51,7 @@ export default function RegisterForm() {
 
   async function onSubmit(values: z.infer<typeof registerSchema>) {
     await register(values.fname, values.lname, values.email, values.phone);
+    form.reset();
   }
 
   return (

@@ -2,6 +2,8 @@ import { create } from "zustand";
 import api from "@/utils/api";
 import { Activity } from "@/types/activities";
 import { socket } from "@/lib/socket";
+import { toast } from "sonner";
+import axios from "axios";
 
 interface ActivitiesState {
   activities: Activity[] | null;
@@ -48,12 +50,23 @@ export const useActivitiesStore = create<ActivitiesState>((set) => ({
         message: res.data.message,
         error: null,
       }));
+      // Show success toast
+      if (res.data.message) {
+        toast.success(res.data.message);
+      }
     } catch (error) {
-      let errorMessage = "An unexpected error occurred";
-      if (error instanceof Error) {
+      let errorMessage = "Failed to create activity";
+
+      // Extract message from axios error response
+      if (axios.isAxiosError(error) && error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error instanceof Error) {
         errorMessage = error.message;
       }
+
       set({ error: errorMessage, message: null });
+      // Show error toast
+      toast.error(errorMessage);
     } finally {
       set({ loading: false });
     }
@@ -65,11 +78,18 @@ export const useActivitiesStore = create<ActivitiesState>((set) => ({
       validateResponse(res, "activities");
       set({ activities: res.data.activities, error: null });
     } catch (error) {
-      let errorMessage = "An unexpected error occurred";
-      if (error instanceof Error) {
+      let errorMessage = "Failed to fetch activities";
+
+      // Extract message from axios error response
+      if (axios.isAxiosError(error) && error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error instanceof Error) {
         errorMessage = error.message;
       }
+
       set({ error: errorMessage });
+      // Show error toast
+      toast.error(errorMessage);
     } finally {
       set({ loading: false });
     }
@@ -109,12 +129,23 @@ export const useActivitiesStore = create<ActivitiesState>((set) => ({
         message: res.data.message,
         error: null,
       }));
+      // Show success toast
+      if (res.data.message) {
+        toast.success(res.data.message);
+      }
     } catch (error) {
-      let errorMessage = "An unexpected error occurred";
-      if (error instanceof Error) {
+      let errorMessage = "Failed to update activity";
+
+      // Extract message from axios error response
+      if (axios.isAxiosError(error) && error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error instanceof Error) {
         errorMessage = error.message;
       }
+
       set({ error: errorMessage });
+      // Show error toast
+      toast.error(errorMessage);
     } finally {
       set({ loading: false });
     }
@@ -131,12 +162,23 @@ export const useActivitiesStore = create<ActivitiesState>((set) => ({
         message: res.data.message,
         error: null,
       }));
+      // Show success toast
+      if (res.data.message) {
+        toast.success(res.data.message);
+      }
     } catch (error) {
-      let errorMessage = "An unexpected error occurred";
-      if (error instanceof Error) {
+      let errorMessage = "Failed to delete activity";
+
+      // Extract message from axios error response
+      if (axios.isAxiosError(error) && error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error instanceof Error) {
         errorMessage = error.message;
       }
+
       set({ error: errorMessage });
+      // Show error toast
+      toast.error(errorMessage);
     } finally {
       set({ loading: false });
     }

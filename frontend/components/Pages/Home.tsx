@@ -10,45 +10,44 @@ import LocationSvg from "../svgs/location";
 const Home = () => {
   return (
     <main
-      className="w-full h-screen flex items-center justify-center text-center px-4 py-12 bg-cover bg-center bg-no-repeat relative"
+      className="w-full h-screen flex  items-center justify-center text-center px-4 py-12 bg-cover bg-center bg-no-repeat relative"
       style={{
         backgroundImage:
           "linear-gradient(to left, rgba(0,0,0,1), rgba(0,0,0,0.3)), url('/images/lexus-lx700h.jpg')",
       }}
     >
       <div className="container flex max-md:flex-col-reverse items-center justify-between gap-8">
-        <div className="flex flex-col items-center gap-6 w-full ">
-          <div className="w-full max-w-md relative z-10">
-            <CountdownCard />
-          </div>
-        </div>
-
-        <div className="flex flex-col items-end max-md:items-center max-md:text-center gap-6 relative z-10 text-right w-full">
+        <div className="flex flex-col max-md:items-center max-md:text-center gap-6 relative z-10 text-left w-full">
           <Title
-            main="عش تجربتك المدهشة"
-            sub="انضم إلينا في حدث حصري مليء بالفخامة والأداء واللحظات التي لا تنس
-          سجل الآن لتأمين مكانك."
+            main="Live Your Amazing Experience"
+            sub="Join us in an exclusive event full of luxury, performance and unforgettable moments.
+          Register now to secure your place."
           />
           <div className="flex gap-4">
             <GlassyCard
               icon={<LocationSvg />}
-              title="17 اكتوبر"
-              subtitle={`التاريخ`}
+              title="October 17"
+              subtitle={`Date`}
               className="pr-4"
             />
             <GlassyCard
               icon={<CalendarSvg />}
-              title="نادي عمان للجولف"
-              subtitle={`الموقع`}
+              title="Amman Golf Club"
+              subtitle={`Location`}
               className="pr-4"
             />
           </div>
           <div className="relative z-10">
             <Button variant="outline" className="rounded-none p-0 m-0">
               <Link href="/activities" className="text-xl cursor-pointer px-12">
-                استكشف الأنشطة
+                Explore Activities
               </Link>
             </Button>
+          </div>
+        </div>
+        <div className="flex flex-col items-center gap-6 w-full ">
+          <div className="w-full max-w-md relative z-10">
+            <CountdownCard />
           </div>
         </div>
       </div>
