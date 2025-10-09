@@ -10,7 +10,7 @@ type TimeLeft = {
   seconds: number;
 };
 
-const TARGET_YEAR = new Date().getFullYear();
+const TARGET_YEAR = 2025;
 const EVENT_DATE = new Date(`${TARGET_YEAR}-10-17T00:00:00`);
 
 function getTimeLeft(target: Date): TimeLeft {
@@ -26,11 +26,17 @@ function getTimeLeft(target: Date): TimeLeft {
 }
 
 const CountdownCard: React.FC = () => {
-  const [timeLeft, setTimeLeft] = useState<TimeLeft>(() =>
-    getTimeLeft(EVENT_DATE)
-  );
+  const [timeLeft, setTimeLeft] = useState<TimeLeft>({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  });
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+    setTimeLeft(getTimeLeft(EVENT_DATE));
     const id = setInterval(() => setTimeLeft(getTimeLeft(EVENT_DATE)), 1000);
     return () => clearInterval(id);
   }, []);
@@ -46,10 +52,21 @@ const CountdownCard: React.FC = () => {
       </CardHeader>
       <CardContent className="px-4 pb-4">
         <div className="mt-3 grid grid-cols-2 gap-4">
-          <Box value={num(timeLeft.days)} label="Days" />
-          <Box value={num(timeLeft.hours)} label="Hours" />
-          <Box value={num(timeLeft.minutes)} label="Minutes" />
-          <Box value={num(timeLeft.seconds)} label="Seconds" />
+          {mounted ? (
+            <>
+              <Box value={num(timeLeft.days)} label="Days" />
+              <Box value={num(timeLeft.hours)} label="Hours" />
+              <Box value={num(timeLeft.minutes)} label="Minutes" />
+              <Box value={num(timeLeft.seconds)} label="Seconds" />
+            </>
+          ) : (
+            <>
+              <Box value="--" label="Days" />
+              <Box value="--" label="Hours" />
+              <Box value="--" label="Minutes" />
+              <Box value="--" label="Seconds" />
+            </>
+          )}
         </div>
       </CardContent>
     </Card>

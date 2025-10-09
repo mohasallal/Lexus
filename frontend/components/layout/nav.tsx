@@ -7,7 +7,6 @@ import { useAuthStore } from "@/store/auth";
 import UserSvg from "../svgs/user";
 import LogOutSvg from "../svgs/logout";
 import { useEffect, useState } from "react";
-import LangSvg from "../svgs/lang";
 import GlassyCard from "../GlassyCard";
 import { Menu, X } from "lucide-react";
 
@@ -74,7 +73,7 @@ const NavBar = () => {
                   variant={"ghost"}
                   className="text-white hover:text-white cursor-pointer hover:bg-gray-600"
                 >
-                  <Link href="/auth/login">Reception Desk</Link>
+                  <Link href="/auth/login">Login</Link>
                 </Button>
               ))}
           </div>
@@ -176,7 +175,7 @@ const NavBar = () => {
                 className="flex items-center gap-3 text-white hover:bg-gray-700 hover:text-white p-4 rounded-lg transition-colors"
               >
                 <UserSvg width={24} height={24} fill="white" />
-                <span className="text-lg">Reception Desk</span>
+                <span className="text-lg">Login</span>
               </Link>
             ))}
         </div>

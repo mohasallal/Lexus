@@ -30,6 +30,7 @@ export const activities = pgTable("activities", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
   description: text("description"),
+  imageUrl: varchar("image_url"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 

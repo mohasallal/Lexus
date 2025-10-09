@@ -4,6 +4,7 @@ import { useActivitiesStore } from "@/store/activities";
 import { useTimeSlotsStore } from "@/store/timeslots";
 import { TimeSlot } from "@/types/timeslots";
 import { Activity } from "@/types/activities";
+import Image from "next/image";
 import {
   Card,
   CardHeader,
@@ -73,7 +74,7 @@ const ActivitiesCards = () => {
   if (error) {
     return (
       <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg max-w-md">
-        <p className="font-medium">خطأ في تحميل الأنشطة</p>
+        <p className="font-medium">Error loading Activities</p>
         <p className="text-sm">{error}</p>
       </div>
     );
@@ -98,9 +99,9 @@ const ActivitiesCards = () => {
           </svg>
         </div>
         <h3 className="text-lg font-semibold text-gray-800 mb-2">
-          لا توجد أنشطة متاحة
+          No activities are avialable{" "}
         </h3>
-        <p className="text-gray-600">سيتم إضافة الأنشطة قريباً</p>
+        <p className="text-gray-600">Activities will be added soon...</p>
       </div>
     );
   }
@@ -112,35 +113,44 @@ const ActivitiesCards = () => {
           {activities.map((activity) => (
             <Card
               key={activity.id}
-              className="hover:shadow-lg transition-all duration-300 cursor-pointer group border-2 hover:border-primary/20"
+              className="bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/15 hover:border-white/30 hover:shadow-xl transition-all duration-300 cursor-pointer group pt-0"
             >
               <CardContent className="p-0">
-                <div className="w-full h-48 bg-gradient-to-br from-gray-100 to-gray-200 rounded-t-xl flex items-center justify-center group-hover:from-primary/5 group-hover:to-primary/10 transition-all duration-300">
-                  <div className="text-gray-400 text-center">
-                    <div className="w-16 h-16 mx-auto mb-2 bg-gray-300 rounded-full flex items-center justify-center">
-                      <svg
-                        className="w-8 h-8 text-gray-500"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                        />
-                      </svg>
+                <div className="w-full h-48 bg-white/5 backdrop-blur-sm border-b border-white/10 rounded-t-xl flex items-center justify-center group-hover:bg-white/10 transition-all duration-300 relative overflow-hidden">
+                  {activity.imageUrl ? (
+                    <Image
+                      src={activity.imageUrl}
+                      alt={activity.name}
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="text-white/60 text-center">
+                      <div className="w-16 h-16 mx-auto mb-2 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full flex items-center justify-center">
+                        <svg
+                          className="w-8 h-8 text-white/70"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                          />
+                        </svg>
+                      </div>
+                      <p className="text-sm text-white/80">Activity Image</p>
                     </div>
-                    <p className="text-sm">Activity Image</p>
-                  </div>
+                  )}
                 </div>
               </CardContent>
               <CardHeader className="pb-4">
-                <CardTitle className="text-xl font-bold text-gray-800 group-hover:text-primary transition-colors duration-200">
+                <CardTitle className="text-xl font-bold text-white group-hover:text-white/90 transition-colors duration-200">
                   {activity.name}
                 </CardTitle>
-                <CardDescription className="text-gray-600 leading-relaxed">
+                <CardDescription className="text-white/70 leading-relaxed">
                   {activity.description}
                 </CardDescription>
               </CardHeader>
@@ -149,8 +159,8 @@ const ActivitiesCards = () => {
                 <Button
                   onClick={() => handleDiscoverTimeSlots(activity)}
                   disabled={loadingActivity === activity.id}
-                  className="w-full"
-                  variant="default"
+                  className="w-full bg-white/20 hover:bg-white/30 border border-white/30 hover:border-white/40 text-white backdrop-blur-sm"
+                  variant="outline"
                 >
                   {loadingActivity === activity.id ? (
                     <>
@@ -184,13 +194,13 @@ const ActivitiesCards = () => {
 
       {/* Time Slots Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl bg-black/80 backdrop-blur-xl border border-white/20">
           <DialogHeader>
-            <DialogTitle className="text-right">
+            <DialogTitle className="text-left text-white">
               {selectedActivity?.name} - Available Times
             </DialogTitle>
-            <DialogDescription className="text-right">
-              اختر الوقت المناسب لك من الأوقات المتاحة أدناه
+            <DialogDescription className="text-left text-white/70">
+              Choose the time that suits you from the available times below
             </DialogDescription>
           </DialogHeader>
 
@@ -202,11 +212,11 @@ const ActivitiesCards = () => {
                 {activityTimeSlots[selectedActivity.id].map((timeSlot) => (
                   <div
                     key={timeSlot.id}
-                    className="p-4 bg-gray-50 rounded-lg border hover:bg-gray-100 transition-colors cursor-pointer text-center"
+                    className="p-4 bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 hover:border-white/30 transition-all duration-300 cursor-pointer text-center rounded-lg"
                   >
-                    <div className="font-semibold text-lg text-gray-800 mb-2">
+                    <div className="font-semibold text-lg text-white mb-2">
                       {new Date(timeSlot.startTime).toLocaleTimeString(
-                        "ar-SA",
+                        "en-US",
                         {
                           hour: "2-digit",
                           minute: "2-digit",
@@ -214,7 +224,7 @@ const ActivitiesCards = () => {
                         }
                       )}
                     </div>
-                    <div className="text-sm text-primary font-medium">
+                    <div className="text-sm text-white/80 font-medium">
                       {timeSlot.availableSeats} seats
                     </div>
                   </div>
@@ -222,9 +232,9 @@ const ActivitiesCards = () => {
               </div>
             ) : (
               <div className="text-center py-8">
-                <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                <div className="w-16 h-16 mx-auto mb-4 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full flex items-center justify-center">
                   <svg
-                    className="w-8 h-8 text-gray-400"
+                    className="w-8 h-8 text-white/70"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -237,11 +247,11 @@ const ActivitiesCards = () => {
                     />
                   </svg>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                  لا توجد أوقات متاحة حالياً
+                <h3 className="text-lg font-semibold text-white mb-2">
+                  No time slots are currently available
                 </h3>
-                <p className="text-gray-600">
-                  سيتم إضافة أوقات جديدة قريباً. يرجى المحاولة مرة أخرى لاحقاً.
+                <p className="text-white/70">
+                  New times will be added soon. Please try again later.
                 </p>
               </div>
             )}

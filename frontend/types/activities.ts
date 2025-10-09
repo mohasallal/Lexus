@@ -7,6 +7,7 @@ export const ActivityType = z.object({
     .string()
     .min(1, "Description is required")
     .nonempty("Description cannot be empty"),
+  imageUrl: z.url("Invalid URL").optional(),
   createdAt: z.string().optional(),
 });
 
