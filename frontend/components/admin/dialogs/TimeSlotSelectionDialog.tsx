@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Activity } from "@/types/activities";
 import { TimeSlot } from "@/types/timeslots";
 import { Clock, ArrowLeft, Calendar, Users } from "lucide-react";
+import { useRegStore } from "@/store/registeration";
 
 interface TimeSlotSelectionDialogProps {
   isOpen: boolean;
@@ -57,6 +58,21 @@ const TimeSlotSelectionDialog: React.FC<TimeSlotSelectionDialogProps> = ({
   timeSlots,
   loading = false,
 }) => {
+  const { registrations, initializeSocketListeners } = useRegStore();
+
+  // Initialize socket listeners for real-time updates
+  React.useEffect(() => {
+    if (isOpen) {
+      initializeSocketListeners();
+    }
+  }, [isOpen, initializeSocketListeners]);
+
+  // Function to get live registered count for a time slot
+  const getLiveRegisteredCount = (timeSlotId: number) => {
+    if (!registrations) return 0;
+    return registrations.filter(reg => reg.timeSlotId === timeSlotId).length;
+  };
+
   const handleTimeSlotClick = (timeSlot: TimeSlot) => {
     onTimeSlotSelect(timeSlot);
     onBack(); // Return to event dialog after selection
@@ -142,7 +158,7 @@ const TimeSlotSelectionDialog: React.FC<TimeSlotSelectionDialogProps> = ({
                           <div className="text-xs text-gray-600">
                             <span className="inline-flex items-center gap-1">
                               <Users className="w-3 h-3" />
-                              {timeSlot.maxParticipants - timeSlot.registeredCount!} left
+                              {timeSlot.maxParticipants - getLiveRegisteredCount(timeSlot.id)} left
                             </span>
                           </div>
                         </div>
