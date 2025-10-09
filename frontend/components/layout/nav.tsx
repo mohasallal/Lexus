@@ -66,7 +66,7 @@ const NavBar = () => {
                       icon={<UserSvg />}
                       title="اهلا و سهلا مجددا"
                       subtitle={`${user.role}`}
-                      className="max-h-fit"
+                      className="pr-4"
                     />
                   </Link>
                 </>

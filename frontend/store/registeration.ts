@@ -3,6 +3,13 @@ import api from "@/utils/api";
 import { Registration } from "@/types/registration";
 import { socket } from "@/lib/socket";
 
+interface RegisteredUserData {
+  regId: number;
+  userName: string;
+  userEmail: string;
+  userPhone?: string;
+}
+
 interface RegistrationsState {
   registrations: Registration[] | null;
   loading: boolean;
@@ -15,6 +22,10 @@ interface RegistrationsState {
   getRegistrationByTimeSlot: (
     timeSlotId: number
   ) => Promise<Registration[] | null>;
+  getRegistrationsByActivityTimeSlot: (
+    activityId: number,
+    timeSlotId: number
+  ) => Promise<RegisteredUserData[] | null>;
   deleteRegistration: (id: number) => Promise<void>;
   initializeSocketListeners: () => void;
 }
@@ -152,8 +163,35 @@ export const useRegStore = create<RegistrationsState>((set) => ({
     }
   },
 
+  getRegistrationsByActivityTimeSlot: async (activityId, timeSlotId) => {
+    try {
+      set({ loading: true, error: null, message: null });
+      const res = await api.get(
+        `/reg/activity/${activityId}/timeslot/${timeSlotId}`
+      );
+      validateResponse(res, "registrations");
+      return res.data.registrations;
+    } catch (error) {
+      let errorMessage = "An unexpected error occurred";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      set({ error: errorMessage });
+      return null;
+    } finally {
+      set({ loading: false });
+    }
+  },
+
   initializeSocketListeners: () => {
+    // Remove existing listeners to prevent duplicates
+    socket.off("registration:created");
+    socket.off("registration:deleted");
+    socket.off("registration:update");
+
+    // Add fresh listeners
     socket.on("registration:created", (newReg: Registration) => {
+      console.log("🎉 Frontend received registration:created:", newReg);
       set((state) => ({
         registrations: state.registrations
           ? [...state.registrations, newReg]
@@ -162,6 +200,7 @@ export const useRegStore = create<RegistrationsState>((set) => ({
     });
 
     socket.on("registration:deleted", ({ id }: { id: number }) => {
+      console.log("🗑️ Frontend received registration:deleted for ID:", id);
       set((state) => ({
         registrations: state.registrations
           ? state.registrations.filter((r) => r.id !== id)
@@ -170,6 +209,7 @@ export const useRegStore = create<RegistrationsState>((set) => ({
     });
 
     socket.on("registration:update", (updatedRegs: Registration[]) => {
+      console.log("📝 Frontend received registration:update:", updatedRegs);
       set({ registrations: updatedRegs });
     });
   },

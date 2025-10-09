@@ -9,10 +9,8 @@ import {
   Clock,
   Mail,
   Phone,
-  Shield,
   Plus,
   Trash2,
-  UserPlus,
   X,
 } from "lucide-react";
 import {
@@ -86,21 +84,16 @@ const RegisteredGuests = () => {
     getActivities();
     getAllRegistrations();
     getTimeSlots();
+  }, [getAllUsers, getActivities, getAllRegistrations, getTimeSlots]);
 
+  // Initialize socket listeners only once when component mounts
+  useEffect(() => {
     initializeSocketListeners();
     initActivitiesSocketListeners();
     initRegSocketListeners();
     initTimeSlotsSocketListeners();
-  }, [
-    getAllUsers,
-    getActivities,
-    getAllRegistrations,
-    getTimeSlots,
-    initializeSocketListeners,
-    initActivitiesSocketListeners,
-    initRegSocketListeners,
-    initTimeSlotsSocketListeners,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty dependency array = only run once on mount
 
   // Get first letter of user's first name
   const getInitial = (name: string) => {
@@ -251,8 +244,8 @@ const RegisteredGuests = () => {
 
   return (
     <>
-      <Card className="w-full rounded-sm py-4 gap-0">
-        <CardHeader className="px-4">
+      <Card className="w-full h-fit rounded-lg shadow-sm border-gray-200 bg-white">
+        <CardHeader className="pb-4">
           <GlassyCard
             className="bg-transparent shadow-none w-full max-w-full py-0 px-0"
             icon={<UserIcon className="w-5 h-5 text-white" />}
@@ -261,64 +254,63 @@ const RegisteredGuests = () => {
             titleColor="text-gray-900"
             iconBgColor="bg-gray-800"
           />
-          <hr />
+          <hr className="border-gray-200" />
         </CardHeader>
-        <CardContent className="px-4">
-          <div className="mt-3 max-h-64 overflow-y-auto">
+        <CardContent className="pb-6">
+          <div className="max-h-96 overflow-y-auto border border-gray-100 rounded-lg">
             {users && users.length > 0 ? (
               <Table>
-                <TableHeader>
+                <TableHeader className="bg-gray-50">
                   <TableRow>
-                    <TableHead className="w-12"></TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Phone</TableHead>
-                    <TableHead>Role</TableHead>
+                    <TableHead className="w-12 text-xs font-semibold text-gray-700"></TableHead>
+                    <TableHead className="text-xs font-semibold text-gray-700">
+                      Name
+                    </TableHead>
+                    <TableHead className="text-xs font-semibold text-gray-700">
+                      Email
+                    </TableHead>
+                    <TableHead className="text-xs font-semibold text-gray-700 hidden sm:table-cell">
+                      Phone
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {users.map((user) => (
                     <TableRow
                       key={user.id}
-                      className="cursor-pointer hover:bg-gray-50 transition-colors"
+                      className="cursor-pointer hover:bg-blue-50 transition-colors border-b border-gray-100 last:border-b-0"
                       onClick={() => handleUserClick(user)}
                     >
-                      <TableCell>
-                        <div className="flex items-center justify-center w-8 h-8 bg-black rounded-full">
+                      <TableCell className="py-3">
+                        <div className="flex items-center justify-center w-8 h-8 bg-gray-800 rounded-full">
                           <span className="text-white font-medium text-xs">
                             {getInitial(user.fname)}
                           </span>
                         </div>
                       </TableCell>
-                      <TableCell className="font-medium">
+                      <TableCell className="font-medium text-gray-900 py-3">
                         {user.fname} {user.lname}
                       </TableCell>
-                      <TableCell className="text-gray-600">
+                      <TableCell className="text-gray-600 text-sm py-3">
                         {user.email}
                       </TableCell>
-                      <TableCell className="text-gray-600">
+                      <TableCell className="text-gray-600 text-sm py-3 hidden sm:table-cell">
                         {user.phone || "-"}
-                      </TableCell>
-                      <TableCell>
-                        {user.role !== "USER" ? (
-                          <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
-                            {user.role}
-                          </span>
-                        ) : (
-                          <span className="text-gray-500 text-xs">User</span>
-                        )}
                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             ) : (
-              <div className="text-center py-8">
-                <div className="flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mx-auto mb-3">
+              <div className="text-center py-12">
+                <div className="flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mx-auto mb-4">
                   <UserIcon className="w-8 h-8 text-gray-400" />
                 </div>
-                <p className="text-gray-500 text-sm">
+                <p className="text-gray-500 text-sm font-medium">
                   No registered guests yet
+                </p>
+                <p className="text-gray-400 text-xs mt-1">
+                  Users will appear here once they register
                 </p>
               </div>
             )}
@@ -392,17 +384,6 @@ const RegisteredGuests = () => {
                     </div>
                   </div>
                   <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                    <Shield className="w-4 h-4 text-gray-500" />
-                    <div>
-                      <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                        Role
-                      </span>
-                      <p className="text-gray-900 font-medium">
-                        {selectedUser.role}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg md:col-span-2">
                     <Calendar className="w-4 h-4 text-gray-500" />
                     <div>
                       <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">

@@ -143,6 +143,12 @@ export const useActivitiesStore = create<ActivitiesState>((set) => ({
   },
 
   initializeSocketListeners: () => {
+    // Remove existing listeners to prevent duplicates
+    socket.off("activityCreated");
+    socket.off("activityUpdated");
+    socket.off("activityDeleted");
+
+    // Add fresh listeners
     socket.on("activityCreated", (newActivity: Activity) => {
       set((state) => ({
         activities: state.activities

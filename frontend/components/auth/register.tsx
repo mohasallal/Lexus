@@ -14,13 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useAuthStore } from "@/store/auth";
 import { registerSchema } from "@/schema/Auth";
 import GlassyCard from "../GlassyCard";
@@ -60,70 +54,81 @@ export default function RegisterForm() {
   }
 
   return (
-    <Card className="w-full max-w-sm rounded-sm py-4">
-      <CardHeader className="px-4">
+    <Card className="w-full h-fit rounded-lg shadow-sm border-gray-200 bg-white">
+      <CardHeader className="pb-4">
         <GlassyCard
           className="bg-transparent shadow-none w-full max-w-full py-0 px-0"
           icon={<UserSvg fill="white" />}
           title="GUEST REGISTRATION"
           subtitle="Add new guests and register them in activities"
-          subColor="text-gray-700"
-          titleColor="text-black"
-          iconBgColor="bg-black"
+          subColor="text-gray-600"
+          titleColor="text-gray-900"
+          iconBgColor="bg-gray-800"
         />
-        <hr />
+        <hr className="border-gray-200" />
       </CardHeader>
-      <CardContent className="px-4">
+      <CardContent className="pb-6">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="fname"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>First Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter your first name"
-                      {...field}
-                      disabled={loading}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="fname"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium">
+                      First Name
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter first name"
+                        {...field}
+                        disabled={loading}
+                        className="border-gray-300 focus:border-gray-500"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="lname"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Last Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter your last name"
-                      {...field}
-                      disabled={loading}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="lname"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium">
+                      Last Name
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter last name"
+                        {...field}
+                        disabled={loading}
+                        className="border-gray-300 focus:border-gray-500"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <FormField
               control={form.control}
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel className="text-gray-700 font-medium">
+                    Email
+                  </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Enter your email"
+                      placeholder="Enter email address"
                       type="email"
                       {...field}
                       disabled={loading}
+                      className="border-gray-300 focus:border-gray-500"
                     />
                   </FormControl>
                   <FormMessage />
@@ -136,13 +141,16 @@ export default function RegisterForm() {
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Phone</FormLabel>
+                  <FormLabel className="text-gray-700 font-medium">
+                    Phone
+                  </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Enter your phone number"
+                      placeholder="Enter phone number"
                       type="tel"
                       {...field}
                       disabled={loading}
+                      className="border-gray-300 focus:border-gray-500"
                     />
                   </FormControl>
                   <FormMessage />
@@ -152,10 +160,10 @@ export default function RegisterForm() {
 
             <Button
               type="submit"
-              className="w-full rounded-none bg-black cursor-pointer hover:bg-gray-900"
+              className="w-full bg-gray-800 text-white hover:bg-gray-900 transition-colors rounded-lg"
               disabled={loading}
             >
-              {loading ? "Registering guest..." : "Register guest"}
+              {loading ? "Registering guest..." : "Register Guest"}
             </Button>
           </form>
         </Form>

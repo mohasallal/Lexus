@@ -10,7 +10,8 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { user, token, isInitialized, initialize } = useAuthStore();
+  const { user, token, isInitialized, initialize, initializeSocketListeners } =
+    useAuthStore();
   const router = useRouter();
 
   useEffect(() => {
@@ -32,6 +33,10 @@ export default function AdminLayout({
       }
     }
   }, [isInitialized, token, user, router]);
+
+  useEffect(() => {
+    initializeSocketListeners();
+  }, [initializeSocketListeners]);
 
   if (!isInitialized) {
     return (

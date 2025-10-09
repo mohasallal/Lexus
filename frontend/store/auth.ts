@@ -117,6 +117,10 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   initializeSocketListeners: () => {
+    // Remove existing listeners to prevent duplicates
+    socket.off("userCreated");
+
+    // Add fresh listeners
     socket.on("userCreated", (newUser: User) => {
       set((state) => ({
         users: state.users ? [...state.users, newUser] : [newUser],

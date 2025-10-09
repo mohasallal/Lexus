@@ -32,21 +32,16 @@ const Statistics = () => {
     getActivities();
     getAllRegistrations();
     getTimeSlots();
+  }, [getAllUsers, getActivities, getAllRegistrations, getTimeSlots]);
 
+  // Initialize socket listeners only once when component mounts
+  useEffect(() => {
     initializeSocketListeners();
     initActivitiesSocketListeners();
     initRegSocketListeners();
     initTimeSlotsSocketListeners();
-  }, [
-    getAllUsers,
-    getActivities,
-    getAllRegistrations,
-    getTimeSlots,
-    initializeSocketListeners,
-    initActivitiesSocketListeners,
-    initRegSocketListeners,
-    initTimeSlotsSocketListeners,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty dependency array = only run once on mount
 
   const guestsCount = users?.length || 0;
   const activitiesCount = activities?.length || 0;
@@ -54,43 +49,43 @@ const Statistics = () => {
   const timeSlotsCount = timeSlots?.length || 0;
 
   return (
-    <Card className="w-full max-w-sm rounded-sm py-4">
-      <CardHeader className="px-4">
+    <Card className="w-full h-fit rounded-lg shadow-sm border-gray-200 bg-white">
+      <CardHeader className="pb-4">
         <GlassyCard
           className="bg-transparent shadow-none w-full max-w-full py-0 px-0"
           icon={<StatsSvg fill="white" />}
           title="EVENT STATISTICS"
-          subColor="text-gray-700"
-          titleColor="text-black"
-          iconBgColor="bg-black"
+          subColor="text-gray-600"
+          titleColor="text-gray-900"
+          iconBgColor="bg-gray-800"
         />
-        <hr />
+        <hr className="border-gray-200" />
       </CardHeader>
-      <CardContent className="px-4">
-        <div className="mt-3 grid grid-cols-2 gap-4">
+      <CardContent className="pb-6">
+        <div className="grid grid-cols-2 gap-3">
           <Box
             value={guestsCount}
             label="عدد الضيوف"
-            fontColor="text-black"
-            bgColor="bg-gray-200"
+            fontColor="text-gray-800"
+            bgColor="bg-blue-50 border border-blue-100"
           />
           <Box
             value={activitiesCount}
             label="عدد الفعاليات"
-            fontColor="text-black"
-            bgColor="bg-gray-200"
+            fontColor="text-gray-800"
+            bgColor="bg-green-50 border border-green-100"
           />
           <Box
             value={registrationsCount}
-            label="عدد المسجلين"
-            fontColor="text-black"
-            bgColor="bg-gray-200"
+            label="عدد التسجيلات"
+            fontColor="text-gray-800"
+            bgColor="bg-purple-50 border border-purple-100"
           />
           <Box
             value={timeSlotsCount}
             label="عدد الأوقات المتاحة"
-            fontColor="text-black"
-            bgColor="bg-gray-200"
+            fontColor="text-gray-800"
+            bgColor="bg-amber-50 border border-amber-100"
           />
         </div>
       </CardContent>

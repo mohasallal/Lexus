@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { db } from "../config/db";
 import { activities, timeSlots, registrations } from "../schema/schema";
-import { eq, count, sql } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { timeSlotSchema } from "../validations/time";
 
 export const createTimeSlot = async (req: Request, res: Response) => {

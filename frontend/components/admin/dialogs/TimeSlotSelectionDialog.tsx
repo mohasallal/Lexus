@@ -142,7 +142,7 @@ const TimeSlotSelectionDialog: React.FC<TimeSlotSelectionDialogProps> = ({
                           <div className="text-xs text-gray-600">
                             <span className="inline-flex items-center gap-1">
                               <Users className="w-3 h-3" />
-                              {timeSlot.maxParticipants} max
+                              {timeSlot.maxParticipants - timeSlot.registeredCount!} left
                             </span>
                           </div>
                         </div>

@@ -3,7 +3,7 @@ import { registerationSchema } from "../validations/registration";
 import { db } from "../config/db";
 import { activities, registrations, timeSlots, users } from "../schema/schema";
 import { eq, count, and } from "drizzle-orm";
-import { io } from "../server";
+import { getIO } from "../socket";
 
 export const registerInTimeSlot = async (req: Request, res: Response) => {
   try {
@@ -63,13 +63,24 @@ export const registerInTimeSlot = async (req: Request, res: Response) => {
       })
       .returning();
 
-    io.emit("registration:created", {
-      id: newReg.id,
-      userId,
-      timeSlotId,
-      slotStart: slot.startTime,
-      slotEnd: slot.endTime,
-    });
+    const [completeReg] = await db
+      .select({
+        id: registrations.id,
+        userId: registrations.userId,
+        timeSlotId: registrations.timeSlotId,
+        createdAt: registrations.createdAt,
+        user: users,
+        timeSlot: timeSlots,
+        activity: activities,
+      })
+      .from(registrations)
+      .leftJoin(users, eq(registrations.userId, users.id))
+      .leftJoin(timeSlots, eq(registrations.timeSlotId, timeSlots.id))
+      .leftJoin(activities, eq(timeSlots.activityId, activities.id))
+      .where(eq(registrations.id, newReg.id));
+
+    const io = getIO();
+    io.emit("registration:created", completeReg);
 
     return res
       .status(201)
@@ -83,19 +94,20 @@ export const getAllRegistrations = async (req: Request, res: Response) => {
   try {
     const regs = await db
       .select({
-        regId: registrations.id,
-        userName: users.fname,
-        userEmail: users.email,
-        userPhone: users.phone,
-        activityName: activities.name,
-        slotStart: timeSlots.startTime,
-        slotEnd: timeSlots.endTime,
+        id: registrations.id,
+        userId: registrations.userId,
+        timeSlotId: registrations.timeSlotId,
+        createdAt: registrations.createdAt,
+        user: users,
+        timeSlot: timeSlots,
+        activity: activities,
       })
       .from(registrations)
       .leftJoin(users, eq(registrations.userId, users.id))
       .leftJoin(timeSlots, eq(registrations.timeSlotId, timeSlots.id))
       .leftJoin(activities, eq(timeSlots.activityId, activities.id));
 
+    const io = getIO();
     io.emit("registration:update", regs);
 
     res.status(200).json({ registrations: regs });
@@ -191,6 +203,7 @@ export const deleteRegistrations = async (req: Request, res: Response) => {
       return res.status(404).json({ message: "Registration not found" });
     }
 
+    const io = getIO();
     io.emit("registration:deleted", { id: Number(id) });
 
     res.status(200).json({ message: "Registration deleted successfully" });

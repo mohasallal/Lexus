@@ -180,6 +180,12 @@ export const useTimeSlotsStore = create<TimeSlotsState>((set) => ({
   },
 
   initializeSocketListeners: () => {
+    // Remove existing listeners to prevent duplicates
+    socket.off("timeSlotCreated");
+    socket.off("timeSlotUpdated");
+    socket.off("timeSlotDeleted");
+
+    // Add fresh listeners
     socket.on("timeSlotCreated", (newTimeSlot: TimeSlot) => {
       set((state) => ({
         timeSlots: state.timeSlots

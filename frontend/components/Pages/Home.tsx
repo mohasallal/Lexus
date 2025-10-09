@@ -34,11 +34,13 @@ const Home = () => {
               icon={<LocationSvg />}
               title="17 اكتوبر"
               subtitle={`التاريخ`}
+              className="pr-4"
             />
             <GlassyCard
               icon={<CalendarSvg />}
               title="نادي عمان للجولف"
               subtitle={`الموقع`}
+              className="pr-4"
             />
           </div>
           <div className="relative z-10">

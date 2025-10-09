@@ -2,6 +2,7 @@ type SvgsType = {
   width?: number;
   height?: number;
   fill?: string;
+  className?: string;
 };
 const UserSvg = ({
   width = 24,

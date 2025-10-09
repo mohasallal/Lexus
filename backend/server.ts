@@ -1,7 +1,6 @@
 // server.ts
 import express from "express";
 import dotenv from "dotenv";
-import { Server } from "socket.io";
 import http from "http";
 // Middlewares
 import helmet from "helmet";
@@ -13,24 +12,24 @@ import authRoutes from "./routes/auth.routes";
 import activitiesRoutes from "./routes/activities.routes";
 import timeRoutes from "./routes/time.routes";
 import regRoutes from "./routes/registration.routes";
+import { initSocket } from "./socket";
 
 dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
-
-export const io = new Server(server, {
-  cors: {
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-  },
-});
+export const io = initSocket(server, app);
 
 // Middlewares
 app.use(helmet());
 app.use(morgan("dev"));
 app.use(bodyParser.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -42,14 +41,6 @@ app.use("/api/reg", regRoutes);
 
 app.get("/", (req, res) => {
   res.send("API HealthCheck...");
-});
-
-io.on("connection", (socket) => {
-  console.log(`🔌 User connected: ${socket.id}`);
-
-  socket.on("disconnect", () => {
-    console.log(`❌ User disconnected: ${socket.id}`);
-  });
 });
 
 export { app, server };

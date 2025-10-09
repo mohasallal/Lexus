@@ -37,7 +37,7 @@ router.get(
   getUserRegistrations
 );
 router.get(
-  "/timeslot/:timeSlotId",
+  "/activity/:activityId/timeslot/:timeSlotId",
   authMiddleware,
   isAuthorizedRole("ADMIN", "SUPERADMIN", "SUPERVISOR"),
   getRegistrationsByTimeSlot

@@ -9,7 +9,7 @@ import {
   updateRoleSchema,
 } from "../validations/auth";
 import { createToken } from "../config/token";
-import { io } from "../server";
+import { getIO } from "../socket";
 
 type RoleType = (typeof role.enumValues)[number];
 
@@ -83,6 +83,7 @@ export const register = async (req: Request, res: Response) => {
       })
       .returning();
 
+    const io = getIO();
     io.emit("userCreated", {
       id: newUser[0].id,
       email: newUser[0].email,
