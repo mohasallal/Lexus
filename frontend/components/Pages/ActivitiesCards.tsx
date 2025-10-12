@@ -232,37 +232,43 @@ const ActivitiesCards = () => {
             activityTimeSlots[selectedActivity.id] &&
             activityTimeSlots[selectedActivity.id].length > 0 ? (
               <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                {activityTimeSlots[selectedActivity.id].map((timeSlot) => (
-                  <div
-                    key={timeSlot.id}
-                    className="p-4 bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 hover:border-white/30 transition-all duration-300 text-center rounded-lg"
-                  >
-                    <div className="font-semibold text-lg text-white mb-2">
-                      {new Date(timeSlot.startTime).toLocaleTimeString(
-                        "en-US",
-                        {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          hour12: true,
-                        }
-                      )}
+                {activityTimeSlots[selectedActivity.id]
+                  .sort(
+                    (a, b) =>
+                      new Date(a.startTime).getTime() -
+                      new Date(b.startTime).getTime()
+                  )
+                  .map((timeSlot) => (
+                    <div
+                      key={timeSlot.id}
+                      className="p-4 bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 hover:border-white/30 transition-all duration-300 text-center rounded-lg"
+                    >
+                      <div className="font-semibold text-lg text-white mb-2">
+                        {new Date(timeSlot.startTime).toLocaleTimeString(
+                          "en-US",
+                          {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: true,
+                          }
+                        )}
+                      </div>
+                      <div className="text-sm text-white/80 font-medium">
+                        {(() => {
+                          const registeredCount = getLiveRegisteredCount(
+                            timeSlot.id
+                          );
+                          const seatsLeft =
+                            timeSlot.maxParticipants - registeredCount;
+                          console.log(
+                            `TimeSlot ${timeSlot.id}: maxParticipants=${timeSlot.maxParticipants}, registeredCount=${registeredCount}, seatsLeft=${seatsLeft}`
+                          );
+                          return seatsLeft;
+                        })()}{" "}
+                        seats left
+                      </div>
                     </div>
-                    <div className="text-sm text-white/80 font-medium">
-                      {(() => {
-                        const registeredCount = getLiveRegisteredCount(
-                          timeSlot.id
-                        );
-                        const seatsLeft =
-                          timeSlot.maxParticipants - registeredCount;
-                        console.log(
-                          `TimeSlot ${timeSlot.id}: maxParticipants=${timeSlot.maxParticipants}, registeredCount=${registeredCount}, seatsLeft=${seatsLeft}`
-                        );
-                        return seatsLeft;
-                      })()}{" "}
-                      seats left
-                    </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             ) : (
               <div className="text-center py-8">
